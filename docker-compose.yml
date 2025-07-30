@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: ./docker/backend.dockerfile
+    container_name: init-hub-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file: "./.env"
+    volumes:
+      - ./backend/src:/app/src
+    networks:
+      - init-hub-network
+
+  agent:
+    build:
+      context: ./agent
+      dockerfile: ./docker/agent.dockerfile
+    container_name: init-hub-agent
+    restart: always
+    ports:
+      - "8001:8000"  # avoid port clash with backend
+    env_file: "./.env"
+    volumes:
+      - ./agent/src:/app/src
+    networks:
+      - init-hub-network
+
+  postgres:
+    image: pgvector/pgvector:0.8.0-pg17
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: inithub
+      POSTGRES_PASSWORD: inithub
+      POSTGRES_DB: comitiva_db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U inithub -d comitiva_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - init-hub-network
+
+networks:
+  init-hub-network:
+    driver: bridge

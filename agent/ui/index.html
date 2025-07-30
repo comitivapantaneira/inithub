@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat Widget</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="chat-container">
+    
+    <div class="chat-header">
+      <div class="user-info">
+        <div class="name">Init Agent</div>
+        <div class="status">● online</div>
+      </div>
+      <div class="close-btn">✖</div>
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="chat-footer">
+      <input type="text" id="userInput" placeholder="Aa" />
+      <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+
+  </div>
+
+  <script>
+    const ws = new WebSocket("ws://localhost:8000/ws/v1/agent");
+
+    const messagesDiv = document.getElementById("messages");
+    const inputField = document.getElementById("userInput");
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      addMessage("assistant", data.message);
+    };
+
+    function sendMessage() {
+      const text = inputField.value.trim();
+      if (!text) return;
+
+      addMessage("user", text);
+      ws.send(JSON.stringify({ message: text }));
+      inputField.value = "";
+    }
+
+    function addMessage(role, content) {
+      const msgWrapper = document.createElement("div");
+      msgWrapper.classList.add("message", role);
+      msgWrapper.textContent = content;
+      messagesDiv.appendChild(msgWrapper);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    inputField.addEventListener("keypress", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>

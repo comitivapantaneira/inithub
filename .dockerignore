@@ -1,0 +1,5 @@
+.coverage
+.env*
+.gitignore
+coverage.xml
+README.md
