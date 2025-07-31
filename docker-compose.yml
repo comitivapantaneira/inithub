@@ -29,9 +29,27 @@ services:
     networks:
       - init-hub-network
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: ./docker/frontend.dockerfile
+    container_name: init-hub-frontend
+    restart: always
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    networks:
+      - init-hub-network
+    depends_on:
+      - backend
+
   postgres:
     image: pgvector/pgvector:0.8.0-pg17
-    container_name: postgres
+    container_name: init-hub-postgres
     restart: always
     environment:
       POSTGRES_USER: inithub
