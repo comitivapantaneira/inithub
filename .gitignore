@@ -150,3 +150,7 @@ settings.json
 uv.lock
 results/
 .~lock.*
+
+# Node
+node_modules/
+dist/
