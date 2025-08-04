@@ -10,6 +10,17 @@ class FlowClassifier(BaseModel):
     )
 
 
+class Initiative(BaseModel):
+    title: str | None = Field(None, description="Título da iniciativa.")
+    context: str | None = Field(None, description="Contexto detalhado da iniciativa.")
+    theme: str | None = Field(None, description="Tema da iniciativa.")
+    deliverable: str | None = Field(None, description="Entregável da iniciativa.")
+    availation_criteria: str | None = Field(
+        None, description="Critérios de avaliação da iniciativa."
+    )
+
+
 class State(TypedDict):
     messages: Annotated[list, add_messages]
+    initiative: Initiative | None
     flow_type: str | None
