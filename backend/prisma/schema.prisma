@@ -7,23 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  initiatives        Initiative[]
-  likes              Like[]
-  comments           Comment[]
-  assignedInitiatives Initiative[] @relation("AssignedInitiatives")
-
-  @@map("users")
-}
-
 model Initiative {
   id          String            @id @default(cuid())
   title       String
@@ -33,11 +16,6 @@ model Initiative {
   updatedAt   DateTime          @updatedAt
   embedding   Unsupported("vector(1536)")?
 
-  authorId     String
-  author       User      @relation(fields: [authorId], references: [id])
-  assignedToId String?
-  assignedTo   User?     @relation("AssignedInitiatives", fields: [assignedToId], references: [id])
-
   likes    Like[]
   comments Comment[]
 
@@ -46,13 +24,10 @@ model Initiative {
 
 model Like {
   id           String @id @default(cuid())
-  userId       String
   initiativeId String
 
-  user       User       @relation(fields: [userId], references: [id])
   initiative Initiative @relation(fields: [initiativeId], references: [id])
 
-  @@unique([userId, initiativeId])
   @@map("likes")
 }
 
@@ -60,18 +35,11 @@ model Comment {
   id           String   @id @default(cuid())
   content      String
   createdAt    DateTime @default(now())
-  userId       String
   initiativeId String
 
-  user       User       @relation(fields: [userId], references: [id])
   initiative Initiative @relation(fields: [initiativeId], references: [id])
 
   @@map("comments")
-}
-
-enum Role {
-  USER
-  ADMIN
 }
 
 enum InitiativeStatus {

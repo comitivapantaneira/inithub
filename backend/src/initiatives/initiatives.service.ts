@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto } from './dto';
 
@@ -6,17 +6,15 @@ import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto } from './dt
 export class InitiativesService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateInitiativeDto, authorId: string) {
+  async create(data: CreateInitiativeDto) {
     return this.prisma.initiative.create({
-      data: { ...data, authorId },
-      include: { author: { select: { id: true, name: true, email: true } } },
+      data,
     });
   }
 
   async findAll() {
     return this.prisma.initiative.findMany({
       include: {
-        author: { select: { id: true, name: true, email: true } },
         _count: { select: { likes: true, comments: true } },
       },
     });
@@ -26,10 +24,8 @@ export class InitiativesService {
     const initiative = await this.prisma.initiative.findUnique({
       where: { id },
       include: {
-        author: { select: { id: true, name: true, email: true } },
-        assignedTo: { select: { id: true, name: true, email: true } },
-        likes: { include: { user: { select: { id: true, name: true } } } },
-        comments: { include: { user: { select: { id: true, name: true } } } },
+        likes: true,
+        comments: true,
       },
     });
     
@@ -37,46 +33,24 @@ export class InitiativesService {
     return initiative;
   }
 
-  async update(id: string, data: UpdateInitiativeDto, userId: string) {
-    const initiative = await this.findOne(id);
-    if (initiative.authorId !== userId) {
-      throw new ForbiddenException('Only author can update initiative');
-    }
-    
+  async update(id: string, data: UpdateInitiativeDto) {
     return this.prisma.initiative.update({
       where: { id },
       data,
-      include: { author: { select: { id: true, name: true, email: true } } },
     });
   }
 
-  async remove(id: string, userId: string) {
-    const initiative = await this.findOne(id);
-    if (initiative.authorId !== userId) {
-      throw new ForbiddenException('Only author can delete initiative');
-    }
-    
+  async remove(id: string) {
     return this.prisma.initiative.delete({ where: { id } });
   }
 
-  async toggleLike(initiativeId: string, userId: string) {
-    const existing = await this.prisma.like.findUnique({
-      where: { userId_initiativeId: { userId, initiativeId } },
-    });
-
-    if (existing) {
-      await this.prisma.like.delete({ where: { id: existing.id } });
-      return { liked: false };
-    } else {
-      await this.prisma.like.create({ data: { userId, initiativeId } });
-      return { liked: true };
-    }
+  async addLike(initiativeId: string) {
+    return this.prisma.like.create({ data: { initiativeId } });
   }
 
-  async addComment(initiativeId: string, data: CreateCommentDto, userId: string) {
+  async addComment(initiativeId: string, data: CreateCommentDto) {
     return this.prisma.comment.create({
-      data: { ...data, initiativeId, userId },
-      include: { user: { select: { id: true, name: true } } },
+      data: { ...data, initiativeId },
     });
   }
 
@@ -84,14 +58,6 @@ export class InitiativesService {
     return this.prisma.initiative.update({
       where: { id },
       data: { status: 'APPROVED' },
-    });
-  }
-
-  async assign(id: string, assignedToId: string) {
-    return this.prisma.initiative.update({
-      where: { id },
-      data: { assignedToId },
-      include: { assignedTo: { select: { id: true, name: true, email: true } } },
     });
   }
 }

@@ -21,9 +21,7 @@ describe('InitiativesService', () => {
               delete: jest.fn(),
             },
             like: {
-              findUnique: jest.fn(),
               create: jest.fn(),
-              delete: jest.fn(),
             },
             comment: {
               create: jest.fn(),

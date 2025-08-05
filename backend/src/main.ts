@@ -13,7 +13,6 @@ async function bootstrap() {
     .setTitle('Inithub API')
     .setDescription('API para gestão de iniciativas colaborativas')
     .setVersion('1.0')
-    .addBearerAuth()
     .build();
   
   const document = SwaggerModule.createDocument(app, config);
