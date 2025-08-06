@@ -3,12 +3,30 @@ from src.llms import default_llm
 
 from langchain_core.messages import AIMessage
 
+from functools import wraps
 import logging
+import traceback
 
 
 PROMPTS_DIR = "prompts"
 
 
+def log_node(func):
+    from logging import getLogger
+
+    log = getLogger("log_node")
+
+    @wraps(func)
+    def wrapper(state: State, *args, **kwargs):
+        log.debug(f"[{func.__name__}] State before: {state}")
+        result = func(state, *args, **kwargs)
+        log.debug(f"[{func.__name__}] State after: {result}")
+        return result
+
+    return wrapper
+
+
+@log_node
 def classify_flow(state: State):
     last_msg = state["messages"][-1]
     classifier_llm = default_llm.with_structured_output(FlowClassifier)
@@ -31,14 +49,18 @@ def classify_flow(state: State):
                 {"role": "user", "content": last_msg.content},
             ]
         )
-        return {"flow_type": result.flow_type}
+
+        output = {"flow_type": result.flow_type}
+        return output
     except Exception as e:
         logging.error(
             f"Failed to classify flow: {e}\n\nUsing default 'guide' flow type."
         )
-        return {"flow_type": "guide"}
+        output = {"flow_type": "guide"}
+        return output
 
 
+@log_node
 def router_flow(state: State):
     flow_type = state.get("flow_type", "direcionar")
 
@@ -50,11 +72,12 @@ def router_flow(state: State):
     return {"next": "guide"}
 
 
+@log_node
 def node_guide(state: State):
     with open(f"{PROMPTS_DIR}/guide.md", "r", encoding="utf-8") as f:
         prompt_content = f.read()
 
-    return {
+    result = {
         "messages": default_llm.invoke(
             state["messages"]
             + [
@@ -65,8 +88,10 @@ def node_guide(state: State):
             ],
         )
     }
+    return result
 
 
+@log_node
 def node_register_initiative(state: State):
     with open(f"{PROMPTS_DIR}/register_initiative.md", "r", encoding="utf-8") as f:
         prompt_template = f.read()
@@ -74,12 +99,13 @@ def node_register_initiative(state: State):
     new_initiative = state.get("initiative") or {}
 
     prompt_content = prompt_template.format(
-        title=getattr(new_initiative, "title", "N/A"),
-        theme=getattr(new_initiative, "theme", "N/A"),
-        description=getattr(new_initiative, "description", "N/A"),
+        CONTEXT=getattr(new_initiative, "context", "N/A"),
+        THEME=getattr(new_initiative, "theme", "N/A"),
+        DELIVERABLE=getattr(new_initiative, "deliverable", "N/A"),
+        AVALIATION_CRITERIA=getattr(new_initiative, "availation_criteria", "N/A"),
     )
 
-    return {
+    result = {
         "messages": default_llm.invoke(
             state["messages"]
             + [
@@ -90,57 +116,63 @@ def node_register_initiative(state: State):
             ],
         )
     }
+    return result
 
 
+@log_node
 def node_extract_initiative(state: State):
-    last_msg = state["messages"][-1]
+    new_initiative = state.get("initiative") or Initiative(
+        title=None, theme=None, context=None, deliverable=None, availation_criteria=None
+    )
     classifier_llm = default_llm.with_structured_output(Initiative)
-    new_initiative = state.get("initiative")
-
-    if new_initiative is None:
-        new_initiative = Initiative(
-            title=None, responsible=None, theme=None, description=None
-        )
-
-    elif isinstance(new_initiative, dict):
-        new_initiative = Initiative(**new_initiative)
 
     try:
         with open(f"{PROMPTS_DIR}/extract_initiative.md", "r", encoding="utf-8") as f:
             prompt_template = f.read()
 
         prompt_content = prompt_template.format(
-            title=new_initiative.title,
-            theme=new_initiative.theme,
-            description=new_initiative.description,
+            CONTEXT=new_initiative.context,
+            THEME=new_initiative.theme,
+            DELIVERABLE=new_initiative.deliverable,
+            AVALIATION_CRITERIA=new_initiative.availation_criteria,
         )
 
         result = classifier_llm.invoke(
-            [
+            state["messages"]
+            + [
                 {
                     "role": "system",
                     "content": prompt_content,
                 },
-                {"role": "user", "content": last_msg.content},
             ]
         )
 
+        logging.debug(f"Extracted initiative: {result}")
+
         # Merge with previous initiative, preferring new values if present
         updated_initiative = Initiative(
-            title=getattr(result, "title", None) or new_initiative.title,
-            theme=getattr(result, "theme", None) or new_initiative.theme,
-            description=getattr(result, "description", None)
-            or new_initiative.description,
+            title=new_initiative.title,
+            context=getattr(result, "context") or new_initiative.context,
+            theme=getattr(result, "theme") or new_initiative.theme,
+            deliverable=getattr(result, "deliverable") or new_initiative.deliverable,
+            availation_criteria=getattr(result, "availation_criteria")
+            or new_initiative.availation_criteria,
         )
-        print(f"Updated Initiative: {updated_initiative.dict()}")
-        return {"initiative": updated_initiative}
+
+        output = {"initiative": updated_initiative}
+        return output
     except Exception as e:
-        logging.error(f"Failed to classify initiative: {e}")
-        return {"initiative": new_initiative}
+        tb = traceback.format_exc()
+        logging.error(
+            f"Failed to classify initiative: {e}\nTraceback:\n{tb}\nState: {state}\nPrompt: {prompt_content if 'prompt_content' in locals() else 'N/A'}"
+        )
+        output = {"initiative": new_initiative}
+        return output
 
 
+@log_node
 def node_find_initiative(state: State):
-    return {
+    result = {
         "messages": [
             AIMessage(
                 role="assistant",
@@ -148,3 +180,4 @@ def node_find_initiative(state: State):
             )
         ]
     }
+    return result

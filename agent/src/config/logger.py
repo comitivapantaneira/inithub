@@ -1,3 +1,5 @@
+from src.config import env
+
 import logging
 from logging.config import dictConfig
 
@@ -27,7 +29,12 @@ logging_config = {
             "propagate": False,
         },
         "app": {
-            "level": "DEBUG",
+            "level": "INFO",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "log_node": {
+            "level": env.LOGGING_LEVEL.upper(),
             "handlers": ["console"],
             "propagate": False,
         },
