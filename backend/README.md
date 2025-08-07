@@ -1,33 +1,23 @@
 # Inithub Backend API
 
-NestJS API para gestão de iniciativas colaborativas com autenticação JWT, recursos sociais e funcionalidades administrativas.
+NestJS API para gestão de iniciativas colaborativas com recursos sociais básicos.
 
 ## 🚀 Tecnologias
 
 - **NestJS** - Framework Node.js
 - **Prisma** - ORM para PostgreSQL
 - **PostgreSQL** - Banco de dados com pgvector
-- **JWT** - Autenticação
 - **Swagger** - Documentação da API
 
 ## 📋 Funcionalidades
 
-### Autenticação
-- Registro e login de usuários
-- Autenticação JWT
-- Proteção de rotas
-
 ### Iniciativas (CRUD)
 - Criar, listar, visualizar, editar e excluir iniciativas
-- Apenas o autor pode editar/excluir suas iniciativas
+- Aprovar iniciativas
 
 ### Recursos Sociais
 - Sistema de likes
 - Comentários nas iniciativas
-
-### Funcionalidades Admin
-- Aprovar iniciativas
-- Atribuir iniciativas a usuários
 
 ## 🛠️ Instalação
 
@@ -45,7 +35,7 @@ npx prisma migrate dev
 npx prisma generate
 ```
 
-## 🏃‍♂️ Executar
+## 🏃♂️ Executar
 
 ```bash
 # Desenvolvimento
@@ -58,24 +48,17 @@ npm run start:prod
 
 ## 📚 API Endpoints
 
-### Autenticação
-- `POST /auth/register` - Registrar usuário
-- `POST /auth/login` - Login
-
 ### Iniciativas
 - `GET /initiatives` - Listar todas
-- `POST /initiatives` - Criar (autenticado)
+- `POST /initiatives` - Criar
 - `GET /initiatives/:id` - Visualizar uma
-- `PATCH /initiatives/:id` - Editar (autor)
-- `DELETE /initiatives/:id` - Excluir (autor)
+- `PATCH /initiatives/:id` - Editar
+- `DELETE /initiatives/:id` - Excluir
+- `PATCH /initiatives/:id/approve` - Aprovar
 
 ### Recursos Sociais
-- `POST /initiatives/:id/like` - Toggle like (autenticado)
-- `POST /initiatives/:id/comments` - Adicionar comentário (autenticado)
-
-### Admin
-- `PATCH /initiatives/:id/approve` - Aprovar (admin)
-- `PATCH /initiatives/:id/assign/:userId` - Atribuir (admin)
+- `POST /initiatives/:id/like` - Adicionar like
+- `POST /initiatives/:id/comments` - Adicionar comentário
 
 ## 📖 Documentação
 
