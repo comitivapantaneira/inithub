@@ -7,26 +7,72 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  department   String?
+  emojiAvatar  String   @default("👤")
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  initiativesAuthored   Initiative[] @relation("InitiativeAuthor")
+  initiativesAssignedTo Initiative[] @relation("InitiativeAssignedTo")
+  initiativesAssignedBy Initiative[] @relation("InitiativeAssignedBy")
+  // removed created/updated by relations; authorId on Initiative is the creator
+  likes                 Like[]
+  comments              Comment[]
+  updates               InitiativeUpdate[] @relation("UpdateAuthor")
+
+  @@map("users")
+}
+
 model Initiative {
-  id          String            @id @default(cuid())
-  title       String
-  description String
-  status      InitiativeStatus  @default(PENDING)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id                  String            @id @default(cuid())
+  authorId            String
+  title               String
+  description         String
+  theme               String
+  context             String
+  deliverable         String
+  evaluationCriteria  String
+  status              InitiativeStatus  @default(PENDING)
+  assignedToId        String?
+  assignedById        String?
+  assignedAt          DateTime?
+  // Prisma does not natively manage pgvector type; handled via migration SQL
+  embedding           Unsupported("vector")?
+  likesCount          Int               @default(0)
+  commentsCount       Int               @default(0)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  
 
-  likes    Like[]
-  comments Comment[]
+  // Relations
+  author      User              @relation("InitiativeAuthor", fields: [authorId], references: [id])
+  assignedTo  User?             @relation("InitiativeAssignedTo", fields: [assignedToId], references: [id])
+  assignedBy  User?             @relation("InitiativeAssignedBy", fields: [assignedById], references: [id])
 
+  likes       Like[]
+  comments    Comment[]
+  updates     InitiativeUpdate[]
+
+  @@index([authorId])
+  @@index([assignedToId])
   @@map("initiatives")
 }
 
 model Like {
-  id           String @id @default(cuid())
+  id           String   @id @default(cuid())
+  userId       String
   initiativeId String
+  createdAt    DateTime @default(now())
 
-  initiative Initiative @relation(fields: [initiativeId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+  initiative  Initiative  @relation(fields: [initiativeId], references: [id])
 
+  @@unique([userId, initiativeId])
   @@map("likes")
 }
 
@@ -34,15 +80,32 @@ model Comment {
   id           String   @id @default(cuid())
   content      String
   createdAt    DateTime @default(now())
+  userId       String
   initiativeId String
 
-  initiative Initiative @relation(fields: [initiativeId], references: [id])
+  user        User        @relation(fields: [userId], references: [id])
+  initiative  Initiative  @relation(fields: [initiativeId], references: [id])
 
   @@map("comments")
+}
+
+model InitiativeUpdate {
+  id            String   @id @default(cuid())
+  initiativeId  String
+  authorId      String
+  content       String
+  createdAt     DateTime @default(now())
+
+  initiative Initiative @relation(fields: [initiativeId], references: [id])
+  author     User       @relation("UpdateAuthor", fields: [authorId], references: [id])
+
+  @@map("initiative_updates")
 }
 
 enum InitiativeStatus {
   PENDING
   APPROVED
   REJECTED
+  IN_EXECUTION
+  COMPLETED
 }
