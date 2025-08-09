@@ -15,7 +15,7 @@ class Initiative(BaseModel):
     context: str | None = Field(None, description="Contexto detalhado da iniciativa.")
     theme: str | None = Field(None, description="Tema da iniciativa.")
     deliverable: str | None = Field(None, description="Entregável da iniciativa.")
-    availation_criteria: str | None = Field(
+    avaliation_criteria: str | None = Field(
         None, description="Critérios de avaliação da iniciativa."
     )
 

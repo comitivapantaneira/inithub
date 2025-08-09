@@ -5,6 +5,8 @@ from src.nodes import (
     node_guide,
     node_find_initiative,
     node_register_initiative,
+    router_is_initiative_complete,
+    node_save_initiative,
 )
 from src.schemas import State
 
@@ -19,6 +21,8 @@ workflow.add_node("guide", node_guide)
 workflow.add_node("find_initiative", node_find_initiative)
 workflow.add_node("register_initiative", node_register_initiative)
 workflow.add_node("extract_initiative", node_extract_initiative)
+workflow.add_node("save_initiative", node_save_initiative)
+workflow.add_node("router_is_initiative_complete", router_is_initiative_complete)
 
 workflow.add_edge(START, "classify_flow")
 workflow.add_edge("classify_flow", "router_flow")
@@ -28,13 +32,22 @@ workflow.add_conditional_edges(
     {
         "guide": "guide",
         "find_initiative": "find_initiative",
+        "register_initiative": "router_is_initiative_complete",
+    },
+)
+workflow.add_conditional_edges(
+    "router_is_initiative_complete",
+    lambda state: state.get("next"),
+    {
         "register_initiative": "register_initiative",
+        "save_initiative": "save_initiative",
     },
 )
 workflow.add_edge("guide", END)
 workflow.add_edge("find_initiative", END)
 workflow.add_edge("register_initiative", "extract_initiative")
 workflow.add_edge("extract_initiative", END)
+workflow.add_edge("save_initiative", END)
 
 chain = workflow.compile()
 
