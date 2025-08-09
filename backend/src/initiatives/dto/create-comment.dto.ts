@@ -6,4 +6,9 @@ export class CreateCommentDto {
   @IsString()
   @IsNotEmpty()
   content: string;
+
+  @ApiProperty({ description: 'User who authored the comment' })
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
 }

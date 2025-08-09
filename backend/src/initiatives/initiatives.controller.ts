@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { InitiativesService } from './initiatives.service';
-import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto } from './dto';
+import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto, CreateLikeDto, ApproveInitiativeDto, CreateInitiativeUpdateDto } from './dto';
 
 @ApiTags('initiatives')
 @Controller('initiatives')
@@ -40,8 +40,8 @@ export class InitiativesController {
 
   @Post(':id/like')
   @ApiOperation({ summary: 'Add like to initiative' })
-  addLike(@Param('id') id: string) {
-    return this.initiativesService.addLike(id);
+  addLike(@Param('id') id: string, @Body() dto: CreateLikeDto) {
+    return this.initiativesService.addLike(id, dto);
   }
 
   @Post(':id/comments')
@@ -51,8 +51,20 @@ export class InitiativesController {
   }
 
   @Patch(':id/approve')
-  @ApiOperation({ summary: 'Approve initiative' })
-  approve(@Param('id') id: string) {
-    return this.initiativesService.approve(id);
+  @ApiOperation({ summary: 'Approve and assign initiative' })
+  approve(
+    @Param('id') id: string,
+    @Body() dto: ApproveInitiativeDto,
+  ) {
+    return this.initiativesService.approve(id, dto);
+  }
+
+  @Post(':id/updates')
+  @ApiOperation({ summary: 'Add execution update to initiative' })
+  addUpdate(
+    @Param('id') id: string,
+    @Body() dto: CreateInitiativeUpdateDto,
+  ) {
+    return this.initiativesService.addUpdate(id, dto);
   }
 }
