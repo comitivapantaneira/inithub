@@ -89,14 +89,3 @@ npm run start:prod
 Acesse `http://localhost:3000/api` para ver a documentação Swagger.
 
 ## 🧪 Testes
-
-```bash
-npm run test
-npm run test:e2e
-npm run test:cov
-```
-
-- Os testes e2e usam a API real de embeddings da OpenAI (sem mocking).
-- Certifique-se de definir `OPENAI_API_KEY` no `.env` antes de rodar.
-- O banco de dados deve estar acessível e com migrações aplicadas (`npx prisma migrate dev`).
-- Node 18+ recomendado.
