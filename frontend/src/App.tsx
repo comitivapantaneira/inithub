@@ -1,11 +1,12 @@
-function App() {
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login"
+
+export default function App() {
   return (
-    <>
-      <div className="app flex justify-center items-center h-screen">
-        <h1>Welcome to Inithub</h1>
-      </div>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </Router>
   )
 }
-
-export default App
