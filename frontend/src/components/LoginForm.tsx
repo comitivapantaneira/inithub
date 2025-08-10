@@ -42,18 +42,6 @@ const LoginForm = () => {
           />
         </div>
 
-        <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Código da organização</Label>
-          </div>
-          <Input 
-            id="password" 
-            type="password" 
-            placeholder="Digite o código da sua organização"
-            required 
-          />
-        </div>
-
         <div className="grid gap-3">
           <Button type="submit" className="w-full shadow-md">
             Entrar
