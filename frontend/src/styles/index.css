@@ -25,6 +25,18 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --green-primary: #27ae60;
+    --background-pending: #fef9c3;
+    --text-pending: #854d0e;
+    --background-approved: #dbeafe;
+    --text-approved: #1e40af;
+    --background-rejected: #fee2e2;
+    --text-rejected: #991b1b;
+    --background-in-execution: #f3e8ff;
+    --text-in-execution: #6b21a8;
+    --background-completed: #dcfce7;
+    --text-completed: #166534;
   }
   .dark {
     --background: 210 10% 20%;
@@ -62,6 +74,10 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+body {
+  background-color: rgb(249 250 251);
 }
 
 ::-webkit-scrollbar {
