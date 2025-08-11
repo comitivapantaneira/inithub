@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import UserDropdown from "@/components/layout/UserDropdown";
-import type { NavLink } from "@/types/types";
+import type { NavLink } from "@/types/index";
 
 const navLinks: NavLink[] = [
   { label: "Home", path: "/home" },
