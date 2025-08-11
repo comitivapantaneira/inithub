@@ -27,7 +27,7 @@ def log_node(func):
 
 
 @log_node
-def classify_flow(state: State):
+def classify_user_request(state: State):
     last_msg = state["messages"][-1]
     classifier_llm = default_llm.with_structured_output(FlowClassifier)
     flow_type = state.get("flow_type", None)
@@ -37,7 +37,9 @@ def classify_flow(state: State):
         return {"flow_type": flow_type}
 
     try:
-        with open(f"{PROMPTS_DIR}/classify_flow.md", "r", encoding="utf-8") as f:
+        with open(
+            f"{PROMPTS_DIR}/classify_user_request.md", "r", encoding="utf-8"
+        ) as f:
             prompt_content = f.read()
 
         result = classifier_llm.invoke(
@@ -61,7 +63,7 @@ def classify_flow(state: State):
 
 
 @log_node
-def router_flow(state: State):
+def route_user_request(state: State):
     flow_type = state.get("flow_type", "direcionar")
 
     if flow_type == "registrar":
@@ -73,7 +75,7 @@ def router_flow(state: State):
 
 
 @log_node
-def node_guide(state: State):
+def guide(state: State):
     with open(f"{PROMPTS_DIR}/guide.md", "r", encoding="utf-8") as f:
         prompt_content = f.read()
 
@@ -92,7 +94,7 @@ def node_guide(state: State):
 
 
 @log_node
-def node_register_initiative(state: State):
+def register_initiative(state: State):
     new_initiative = state.get("initiative") or {}
 
     with open(f"{PROMPTS_DIR}/register_initiative.md", "r", encoding="utf-8") as f:
@@ -119,7 +121,7 @@ def node_register_initiative(state: State):
 
 
 @log_node
-def router_is_initiative_complete(state: State):
+def is_initiative_complete(state: State):
     new_initiative = state.get("initiative") or {}
 
     if new_initiative and all(
@@ -137,7 +139,7 @@ def router_is_initiative_complete(state: State):
 
 
 @log_node
-def node_extract_initiative(state: State):
+def extract_initiative(state: State):
     new_initiative = state.get("initiative") or Initiative(
         title=None, theme=None, context=None, deliverable=None, avaliation_criteria=None
     )
@@ -189,7 +191,7 @@ def node_extract_initiative(state: State):
 
 
 @log_node
-def node_save_initiative(state: State):
+def save_initiative(state: State):
     msgs = [
         "Ótimo, aguarde um momento, estou registrando sua iniciativa!",
         "Iniciativa registrada com sucesso! Você pode revisar e complementar as informações em www.inithub.com/initiatives/12345.",
@@ -203,7 +205,7 @@ def node_save_initiative(state: State):
 
 
 @log_node
-def node_find_initiative(state: State):
+def find_initiative(state: State):
     result = {
         "messages": [
             AIMessage(

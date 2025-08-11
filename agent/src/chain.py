@@ -1,13 +1,4 @@
-from src.nodes import (
-    classify_flow,
-    node_extract_initiative,
-    router_flow,
-    node_guide,
-    node_find_initiative,
-    node_register_initiative,
-    router_is_initiative_complete,
-    node_save_initiative,
-)
+from src import nodes
 from src.schemas import State
 
 from langgraph.graph import StateGraph, START, END
@@ -15,28 +6,28 @@ from langgraph.graph import StateGraph, START, END
 
 workflow = StateGraph(State)
 
-workflow.add_node("classify_flow", classify_flow)
-workflow.add_node("router_flow", router_flow)
-workflow.add_node("guide", node_guide)
-workflow.add_node("find_initiative", node_find_initiative)
-workflow.add_node("register_initiative", node_register_initiative)
-workflow.add_node("extract_initiative", node_extract_initiative)
-workflow.add_node("save_initiative", node_save_initiative)
-workflow.add_node("router_is_initiative_complete", router_is_initiative_complete)
+workflow.add_node("classify_user_request", nodes.classify_user_request)
+workflow.add_node("route_user_request", nodes.route_user_request)
+workflow.add_node("guide", nodes.guide)
+workflow.add_node("find_initiative", nodes.find_initiative)
+workflow.add_node("register_initiative", nodes.register_initiative)
+workflow.add_node("extract_initiative", nodes.extract_initiative)
+workflow.add_node("save_initiative", nodes.save_initiative)
+workflow.add_node("is_initiative_complete", nodes.is_initiative_complete)
 
-workflow.add_edge(START, "classify_flow")
-workflow.add_edge("classify_flow", "router_flow")
+workflow.add_edge(START, "classify_user_request")
+workflow.add_edge("classify_user_request", "route_user_request")
 workflow.add_conditional_edges(
-    "router_flow",
+    "route_user_request",
     lambda state: state.get("next"),
     {
         "guide": "guide",
         "find_initiative": "find_initiative",
-        "register_initiative": "router_is_initiative_complete",
+        "register_initiative": "is_initiative_complete",
     },
 )
 workflow.add_conditional_edges(
-    "router_is_initiative_complete",
+    "is_initiative_complete",
     lambda state: state.get("next"),
     {
         "register_initiative": "register_initiative",
