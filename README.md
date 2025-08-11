@@ -44,40 +44,6 @@ As APIs REST são usadas para operações padrão, como gerenciamento de dados, 
 
 ## 🏃♂️ Como Executar o Backend
 
-### Pré-requisitos
-- Node.js 18+
-- Docker e Docker Compose
+Para instruções completas de instalação, variáveis de ambiente, migrações, execução, endpoints e testes, consulte:
 
-### Passos
-
-1. **Iniciar o banco de dados:**
-   ```bash
-   cd backend
-   docker-compose up -d
-   ```
-
-2. **Instalar dependências:**
-   ```bash
-   npm install
-   ```
-
-3. **Configurar banco de dados:**
-   ```bash
-   npx prisma migrate reset --force --skip-generate
-   npx prisma generate
-   ```
-
-4. **Executar em desenvolvimento:**
-   ```bash
-   npm run start:dev
-   ```
-
-5. **Acessar a API:**
-   - API: http://localhost:3000
-   - Documentação Swagger: http://localhost:3000/api
-
-### Endpoints Principais
-- `GET /initiatives` - Listar iniciativas
-- `POST /initiatives` - Criar iniciativa
-- `POST /initiatives/:id/like` - Adicionar like
-- `POST /initiatives/:id/comments` - Adicionar comentário
+- [backend/README.md](backend/README.md)

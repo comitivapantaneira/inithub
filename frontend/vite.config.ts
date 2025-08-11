@@ -6,8 +6,8 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@': '/src',
-    },
+      "@": "/src",
+    }
   },
   css: {
     postcss: './postcss.config.js',

@@ -1,9 +1,9 @@
 const Home = () => {
     return (
         <h1>
-            Bem vindo ao Home Page
+            Bem-vindo ao Inithub!
         </h1>
-    );
+    )
 }
 
 export default Home;

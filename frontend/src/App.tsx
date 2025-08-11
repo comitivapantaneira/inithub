@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "@/pages/Login";
-import Home from "@/pages/Home";
 import CreateInitiative from "@/pages/CreateInitiative";
+import CreateAccount from "@/pages/CreateAccount";
 import Header from "@/components/layout/Header";
 
 function LayoutWithHeader({ children }: { children: React.ReactNode }) {
@@ -23,7 +23,7 @@ export default function App() {
           path="/home"
           element={
             <LayoutWithHeader>
-              <Home />
+              <h1>home</h1>
             </LayoutWithHeader>
           }
         />
@@ -63,6 +63,13 @@ export default function App() {
             </LayoutWithHeader>
           }
         />
+
+        <Route
+          path="/create-account"
+          element={
+            <CreateAccount />
+          }
+        />  
       </Routes>
     </Router>
   );
