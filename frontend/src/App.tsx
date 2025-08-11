@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import CreateAccount from "./pages/CreateAccount";
-//import Home from "./pages/Home";
-import Header from "./components/Header";
-//import CreateIniciative from "./components/CreateIniciative";
+import Login from "@/pages/Login";
+import CreateInitiative from "@/pages/CreateInitiative";
+import CreateAccount from "@/pages/CreateAccount";
+import Header from "@/components/layout/Header";
 
 function LayoutWithHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -60,7 +59,7 @@ export default function App() {
           path="/create-initiative"
           element={
             <LayoutWithHeader>
-              <h1>create inicia</h1>
+              <CreateInitiative />
             </LayoutWithHeader>
           }
         />

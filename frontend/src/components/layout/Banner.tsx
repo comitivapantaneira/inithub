@@ -1,4 +1,4 @@
-const LoginBanner = () => {
+const Banner = () => {
     return (
         <div className="h-screen w-full relative">
             <img 
@@ -38,4 +38,4 @@ const LoginBanner = () => {
     );
 };
 
-export default LoginBanner;
+export default Banner;

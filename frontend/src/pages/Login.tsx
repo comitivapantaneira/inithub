@@ -1,11 +1,11 @@
-import LoginBanner from "@/components/LoginBanner";
-import LoginForm from "@/components/LoginForm";
+import Banner from "@/components/layout/Banner";
+import LoginForm from "@/components/features/auth/LoginForm";
 
 const Login = () => {
     return (
         <div className="min-h-screen">
             <div className="hidden lg:block fixed left-0 top-0 h-screen w-[60%]">
-                <LoginBanner />
+                <Banner />
             </div>
 
             <div className="flex flex-col gap-4 p-6 md:p-10 bg-muted lg:ml-[60%] min-h-screen">

@@ -1,7 +1,7 @@
 import { useState } from "react";
-import LoginBanner from "@/components/LoginBanner";
-import CreateAccountFormStep1 from "@/components/CreateAccountFormStep1";
-import CreateAccountFormStep2 from "@/components/CreateAccountFormStep2";
+import Banner from "@/components/layout/Banner";
+import CreateAccountFormStep1 from "@/components/features/account/CreateAccountFormStep1";
+import CreateAccountFormStep2 from "@/components/features/account/CreateAccountFormStep2";
 
 const CreateAccount = () => {
     const [step, setStep] = useState(1);
@@ -17,7 +17,7 @@ const CreateAccount = () => {
     return (
         <div className="min-h-screen">
             <div className="hidden lg:block fixed left-0 top-0 h-screen w-[60%]">
-                <LoginBanner />
+                <Banner />
             </div>
 
             <div className="flex flex-col gap-4 p-6 md:p-10 bg-muted lg:ml-[60%] min-h-screen">

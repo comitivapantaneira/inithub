@@ -35,7 +35,7 @@ const LoginForm = () => {
           <div className="flex items-center">
             <Label htmlFor="password">Senha</Label>
           </div>
-          <Input
+          <Input 
             className="bg-transparent"
             id="password" 
             type="password" 

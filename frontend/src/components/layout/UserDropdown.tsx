@@ -1,11 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 
 const UserDropdown = () => {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setUserDropdownOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (userDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userDropdownOpen]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setUserDropdownOpen(!userDropdownOpen)}
         className="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
@@ -30,7 +49,7 @@ const UserDropdown = () => {
 
           <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
             <User className="w-4 h-4" />
-            <span>Perfil</span>
+            <span>Profile</span>
           </button>
 
           <button className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center space-x-2">
