@@ -1,5 +1,5 @@
-import LoginBanner from "../components/LoginBanner";
-import LoginForm from "../components/LoginForm";
+import LoginBanner from "@/components/features/auth/LoginBanner";
+import LoginForm from "@/components/features/auth/LoginForm";
 
 const Login = () => {
     return (
