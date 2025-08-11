@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { Button } from "@/ui/button";
+import { Input } from "@/ui/input";
+import { Label } from "@/ui/label";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -23,6 +23,7 @@ const LoginForm = () => {
         <div className="grid gap-2">
           <Label htmlFor="email">Email</Label>
           <Input 
+            className="bg-transparent"
             id="email" 
             type="email" 
             placeholder="seu.email@empresa.com" 
@@ -34,7 +35,8 @@ const LoginForm = () => {
           <div className="flex items-center">
             <Label htmlFor="password">Senha</Label>
           </div>
-          <Input 
+          <Input
+            className="bg-transparent"
             id="password" 
             type="password" 
             placeholder="Digite sua senha"
