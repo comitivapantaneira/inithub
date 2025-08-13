@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Send, ArrowLeft } from 'lucide-react';
-import { getAvatarClasses, getAvatarEmoji, getMessageClasses } from "@/utils/chatStyles";
+import { getAvatarClasses, getAvatarEmoji, getMessageClasses } from "@/utils/functions/functionsChat";
 import { Input } from "@/ui/input";
 import type { Message } from "@/types/index";
 
