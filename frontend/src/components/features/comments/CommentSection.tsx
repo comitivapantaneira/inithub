@@ -1,13 +1,13 @@
 import type { Initiative } from "@/types/initiative";
-import { CommentItem } from "@/components/features/comments/CommentItem";
-import { CommentInput } from "@/components/features/comments/CommentInput";
+import CommentItem from "@/components/features/comments/CommentItem";
+import CommentInput from "@/components/features/comments/CommentInput";
 import { useComments } from "@/hooks/useComments";
 
 interface CommentSectionProps {
   initiative: Initiative;
 }
 
-export const CommentSection = ({ initiative }: CommentSectionProps) => {
+const CommentSection = ({ initiative }: CommentSectionProps) => {
   const {
     comments,
     commentText,

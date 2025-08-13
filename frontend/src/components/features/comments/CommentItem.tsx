@@ -1,6 +1,6 @@
 import { Heart, Reply, ChevronDown, ChevronUp } from "lucide-react";
-import { ReplyInput } from "@/components/features/comments/ReplyInput";
-import { ReplyList } from "@/components/features/comments/ReplyList";
+import ReplyInput from "@/components/features/comments/ReplyInput";
+import ReplyList from "@/components/features/comments/ReplyList";
 import { convertDateToString } from "@/utils/functions/functionsInitiative";
 import type { Comment } from "@/types/initiative";
 
@@ -16,7 +16,7 @@ interface CommentItemProps {
   onToggleReplies: (commentId: string) => void;
 }
 
-export const CommentItem = ({
+const CommentItem = ({
   comment,
   replyingTo,
   setReplyingTo,
@@ -93,3 +93,5 @@ export const CommentItem = ({
     </div>
   );
 };
+
+export default CommentItem;

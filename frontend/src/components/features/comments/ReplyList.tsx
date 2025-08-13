@@ -5,7 +5,7 @@ interface ReplyListProps {
   replies: Comment[];
 }
 
-export const ReplyList = ({ replies }: ReplyListProps) => {
+const ReplyList = ({ replies }: ReplyListProps) => {
   return (
     <div className="ml-6 space-y-2">
       {replies.map((reply) => (
@@ -25,3 +25,5 @@ export const ReplyList = ({ replies }: ReplyListProps) => {
     </div>
   );
 };
+
+export default ReplyList;

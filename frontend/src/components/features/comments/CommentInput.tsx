@@ -7,7 +7,7 @@ interface CommentInputProps {
   onCommentSubmit: () => void;
 }
 
-export const CommentInput = ({ 
+const CommentInput = ({ 
   currentUser, 
   commentText, 
   setCommentText, 
@@ -37,3 +37,5 @@ export const CommentInput = ({
     </div>
   );
 };
+
+export default CommentInput;
