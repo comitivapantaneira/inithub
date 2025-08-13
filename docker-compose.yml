@@ -8,7 +8,7 @@ services:
     container_name: init-hub-backend
     restart: always
     ports:
-      - "8000:8000"
+      - "3000:3000"
     env_file: "./.env"
     volumes:
       - ./backend/src:/app/src
@@ -22,10 +22,10 @@ services:
     container_name: init-hub-agent
     restart: always
     ports:
-      - "8001:8000"  # avoid port clash with backend
+      - "8000:8000"
     env_file: "./.env"
     volumes:
-      - ./agent/src:/app/src
+      - ./agent:/app
     networks:
       - init-hub-network
 
@@ -48,15 +48,14 @@ services:
       - backend
 
   postgres:
-    image: pgvector/pgvector:0.8.0-pg17
-    container_name: init-hub-postgres
-    restart: always
+    image: pgvector/pgvector:pg15
+    container_name: inithub-postgres
     environment:
-      POSTGRES_USER: inithub
-      POSTGRES_PASSWORD: inithub
-      POSTGRES_DB: comitiva_db
+      POSTGRES_DB: inithub
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U inithub -d comitiva_db" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d inithub" ]
       interval: 10s
       timeout: 5s
       retries: 5

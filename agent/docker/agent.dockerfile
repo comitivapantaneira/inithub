@@ -16,6 +16,7 @@ RUN pip install .
 # Copia o código da aplicação
 COPY ./src ./src
 COPY ./ui ./ui
+COPY ./prompts ./prompts
 
 # Expõe porta padrão do FastAPI
 EXPOSE 8000
