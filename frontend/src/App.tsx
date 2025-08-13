@@ -3,6 +3,9 @@ import Login from "@/pages/Login";
 import CreateInitiative from "@/pages/CreateInitiative";
 import CreateAccount from "@/pages/CreateAccount";
 import Header from "@/components/layout/Header";
+import Home from "@/pages/Home";
+import MyInitiatives from "@/pages/MyInitiatives";
+import ProgressInitiative from "@/pages/ProgressInitiative";
 
 function LayoutWithHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -23,7 +26,7 @@ export default function App() {
           path="/home"
           element={
             <LayoutWithHeader>
-              <h1>home</h1>
+              <Home />
             </LayoutWithHeader>
           }
         />
@@ -32,10 +35,20 @@ export default function App() {
           path="/my-initiatives"
           element={
             <LayoutWithHeader>
-              <h1>Minhas Iniciativas</h1>
+              <MyInitiatives />
             </LayoutWithHeader>
           }
         />
+
+        <Route
+          path="/initiatives/:id/progress"
+          element={
+            <LayoutWithHeader>
+              <ProgressInitiative />
+            </LayoutWithHeader>
+          }
+        />
+
 
         <Route
           path="/news"
