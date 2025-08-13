@@ -42,6 +42,7 @@ dependencies = [
 
     # Utilities
     "python-dotenv==1.1.1",
+    "colorlog==6.9.0",
 
     # Graph visualization
     "pygraphviz==1.14",

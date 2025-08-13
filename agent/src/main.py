@@ -1,5 +1,6 @@
 from src.chain import chain
 from src.config import logger
+from src.schemas import State
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -14,7 +15,7 @@ logger.setup_logging()
 @app.websocket("/ws/v1/agent")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    state = {"messages": [], "flow_type": None}
+    state: State = {"messages": [], "flow_type": None}
 
     while True:
         data = await websocket.receive_text()
