@@ -12,9 +12,10 @@ interface UpdatesTimelineProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, content: string) => void;
+  editable?: boolean;
 }
 
-export function UpdatesTimeline({
+const UpdatesTimeline = ({
   updates,
   isAdding,
   onRequestAdd,
@@ -23,12 +24,13 @@ export function UpdatesTimeline({
   onToggleComplete,
   onDelete,
   onEdit,
-}: UpdatesTimelineProps) {
+  editable = false
+}: UpdatesTimelineProps) => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-md font-bold text-gray-900">Timeline de Execução</h2>
-        {!isAdding && (
+        {editable && !isAdding && (
           <button
             onClick={onRequestAdd}
             className="text-white text-sm px-6 py-2 rounded-lg font-medium flex items-center space-x-2 shadow-sm bg-[var(--green-primary)] hover:bg-green-700 transition-colors duration-200"
@@ -40,10 +42,10 @@ export function UpdatesTimeline({
       </div>
 
       <div className="space-y-4">
-        {isAdding && (
+        {isAdding && editable && (
           <AddStepForm
             onCancel={onCancelAdd}
-            onSave={(content) => onConfirmAdd(content)}
+            onSave={onConfirmAdd}
           />
         )}
 
@@ -56,18 +58,23 @@ export function UpdatesTimeline({
             onToggleComplete={onToggleComplete}
             onDelete={onDelete}
             onEdit={onEdit}
+            editable={editable}
           />
         ))}
 
         {updates.length === 0 && !isAdding && (
           <div className="text-center py-8 text-gray-500">
             <p>Nenhum passo registrado ainda.</p>
-            <p className="text-sm">
-              Clique em "Adicionar Passo" para começar a documentar o progresso.
-            </p>
+            {editable && (
+              <p className="text-sm">
+                Clique em "Adicionar Passo" para começar a documentar o progresso.
+              </p>
+            )}
           </div>
         )}
       </div>
     </div>
   );
 }
+
+export default UpdatesTimeline;

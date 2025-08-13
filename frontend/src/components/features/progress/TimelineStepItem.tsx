@@ -11,6 +11,7 @@ interface TimelineStepItemProps {
   onToggleComplete: (id: string) => void;
   onDelete: (id: string) => void;
   onEdit: (id: string, newContent: string) => void;
+  editable?: boolean;
 }
 
 const TimelineStepItem = ({
@@ -20,11 +21,13 @@ const TimelineStepItem = ({
   onToggleComplete,
   onDelete,
   onEdit,
+  editable = false,
 }: TimelineStepItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [draft, setDraft] = useState(update.content);
 
   const handleSave = () => {
+    if (!editable) return;
     onEdit(update.id, draft);
     setIsEditing(false);
   };
@@ -34,15 +37,33 @@ const TimelineStepItem = ({
     setIsEditing(false);
   };
 
+  const handleToggleComplete = () => {
+    if (!editable) return;
+    onToggleComplete(update.id);
+  };
+
+  const handleDelete = () => {
+    if (!editable) return;
+    onDelete(update.id);
+  };
+
+  const handleEditClick = () => {
+    if (!editable) return;
+    setIsEditing(true);
+  };
+
   return (
     <div className="flex items-start space-x-4">
       <div className="flex flex-col items-center">
         <button
-          onClick={() => onToggleComplete(update.id)}
+          onClick={handleToggleComplete}
+          disabled={!editable}
           className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
             update.isCompleted
               ? "bg-green-500 border-green-500 text-white"
-              : "border-gray-300 hover:border-green-400"
+              : editable 
+                ? "border-gray-300 hover:border-green-400 cursor-pointer" 
+                : "border-gray-300 cursor-default"
           }`}
         >
           {update.isCompleted && <Check className="w-3 h-3" />}
@@ -55,7 +76,7 @@ const TimelineStepItem = ({
           update.isCompleted ? "bg-[var(--background-completed)]" : "bg-gray-50"
         }`}
       >
-        {isEditing ? (
+        {isEditing && editable ? (
             <div className="space-y-3">
               <textarea
                 value={draft}
@@ -97,20 +118,22 @@ const TimelineStepItem = ({
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="text-gray-400 hover:text-blue-500 p-1"
-                >
-                  <Edit2 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => onDelete(update.id)}
-                  className="text-gray-400 hover:text-red-500 p-1"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
+              {editable && (
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={handleEditClick}
+                    className="text-gray-400 hover:text-blue-500 p-1"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="text-gray-400 hover:text-red-500 p-1"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
 
             <p className="text-sm text-gray-700 leading-relaxed">
