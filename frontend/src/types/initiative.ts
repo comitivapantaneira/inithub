@@ -53,7 +53,6 @@ type Initiative = {
   assignedBy?: User | null;
 };
 
-
 type InitiativeUpdate = {
   id: string;
   initiativeId: string;
@@ -61,6 +60,8 @@ type InitiativeUpdate = {
   content: string;
   createdAt: Date;
   initiative: Initiative;
+  isCompleted: boolean;
+  isEditing?: boolean;
   author: User;
 };
 
