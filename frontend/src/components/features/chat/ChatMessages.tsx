@@ -4,22 +4,21 @@ import { Send, ArrowLeft } from 'lucide-react';
 import { getAvatarClasses, getAvatarEmoji, getMessageClasses } from "@/utils/functions/functionsChat";
 import { Input } from "@/ui/input";
 import type { Message } from "@/types/index";
-import { WebSocketAgentService, type AgentMessage, type WSStatus } from "@/services/WebSocketAgentService";
-import { useInitiative } from "@/contexts/InitiativeContext";
+import { agentService, type ChatInitiative } from "@/services/agent";
 
-const initialBotMessage: Message = {
-    id: `${Date.now()}`,
+const initialIaGreeting: Message = {
+    id: "seed-ia-1",
     author: "ia",
-    text: "Olá! 👋 Estou aqui para te ajudar a estruturar sua ideia. Conte um pouco sobre o que você tem em mente."
+    text: "Olá! 👋 Vou te ajudar a estruturar sua ideia. Me conte sobre sua proposta."
 };
 
-const ChatMessages = () => {
+type Props = {
+    onInitiativeUpdate?: (initiative: ChatInitiative | null) => void;
+};
+
+const ChatMessages = ({ onInitiativeUpdate }: Props) => {
     const [inputMessage, setInputMessage] = useState('');
-    const [messages, setMessages] = useState<Message[]>([initialBotMessage]);
-    const [status, setStatus] = useState<WSStatus>("idle");
-    const serviceRef = useRef<WebSocketAgentService | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const { updateInitiative } = useInitiative();
+    const [messages, setMessages] = useState<Message[]>([initialIaGreeting]);
 
     const navigate = useNavigate();
 
@@ -28,54 +27,48 @@ const ChatMessages = () => {
     };
 
     useEffect(() => {
-        const service = new WebSocketAgentService();
-        serviceRef.current = service;
-
-        service.onStatus((s) => setStatus(s));
-        service.onMessage((data: AgentMessage) => {
-            setMessages((prev) => (
-                [...prev, { id: `${Date.now()}-${prev.length}`, author: "ia", text: data.message }]
-            ));
-            
-            // Update initiative data if present
-            if (data.initiative) {
-                updateInitiative(data.initiative);
-            }
+        agentService.connect();
+        const unsub = agentService.subscribe(({ message, initiative }) => {
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: String(Date.now()),
+                    author: "ia",
+                    text: message,
+                },
+            ]);
+            onInitiativeUpdate?.(initiative);
         });
-
-        service.connect();
-
         return () => {
-            service.close();
-            serviceRef.current = null;
+            unsub();
         };
-    }, [updateInitiative]);
+    }, [onInitiativeUpdate]);
 
-    // Auto-scroll to bottom when messages change
+    // Auto-scroll to bottom on new messages
+    const messagesRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        const el = messagesRef.current;
+        if (el) {
+            el.scrollTop = el.scrollHeight;
+        }
     }, [messages]);
 
     const handleSend = () => {
         const text = inputMessage.trim();
         if (!text) return;
-
-        // Optimistic append
-        setMessages((prev) => ([...prev, { id: `${Date.now()}-${prev.length}`, author: "user", text }]));
-        setInputMessage("");
-
-        try {
-            serviceRef.current?.sendMessage(text);
-        } catch (e) {
-            console.error(e);
-            // If failed, reflect error in UI
-            setMessages((prev) => ([...prev, { id: `${Date.now()}-${prev.length}`, author: "ia", text: "[Erro] Conexão indisponível. Tente novamente." }]));
-        }
+        // Push user message locally
+        setMessages((prev) => [
+            ...prev,
+            { id: String(Date.now()), author: "user", text },
+        ]);
+        // Send to agent
+        agentService.sendMessage(text);
+        setInputMessage('');
     };
-
+  
     return (
-        <div className="h-[86vh] flex flex-col bg-white rounded-lg overflow-hidden">
-            <div className="bg-[var(--green-primary)] text-white p-3 rounded-t-lg flex-shrink-0">
+        <div className="flex flex-col h-[80vh] bg-white rounded-lg overflow-hidden">
+            <div className="bg-[var(--green-primary)] text-white p-4 rounded-t-lg">
                 <div className="flex items-center gap-3 mb-2">
                     <button
                         onClick={goToPreviousScreen}
@@ -87,7 +80,7 @@ const ChatMessages = () => {
                 </div>
             </div>
         
-            <div className="flex-1 p-3 overflow-y-auto space-y-3 min-h-0">
+            <div ref={messagesRef} className="flex-1 p-4 overflow-y-auto space-y-4">
                 {messages.map((message) => (
                     <div
                         key={message.id}
@@ -112,17 +105,21 @@ const ChatMessages = () => {
                     </div>
                     </div>
                 ))}
-                <div ref={messagesEndRef} />
             </div>
             
-            <div className="p-3 border-t flex-shrink-0">
+            <div className="p-4 border-t">
                 <div className="flex gap-2">
                     <Input
                         id="message-input"
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') handleSend(); }}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSend();
+                            }
+                        }}
                         placeholder="Digite sua mensagem..."
                         style={{ borderRadius: '25px' }}
                     />
@@ -136,7 +133,7 @@ const ChatMessages = () => {
             </div>
         </div>
     );
-};
+}
+;
 
 export default ChatMessages;
-

@@ -1,124 +1,106 @@
 import { Label } from "@/ui/label";
 import { Input } from "@/ui/input";
-import { useInitiative } from "@/contexts/InitiativeContext";
-import { useState, useEffect } from "react";
+import type { ChatInitiative } from "@/services/agent";
 
-const ChatInitiativePreview = () => {
-    const { initiative } = useInitiative();
-    
-    // Local state for editable values
-    const [editableInitiative, setEditableInitiative] = useState({
-        title: "",
-        theme: "",
-        deliverable: "",
-        avaliation_criteria: "",
-        context: ""
-    });
+type Props = {
+    initiative: ChatInitiative | null;
+    onChange?: (value: ChatInitiative | null) => void;
+};
 
-    // Update local state when initiative from context changes
-    useEffect(() => {
-        if (initiative) {
-            setEditableInitiative({
-                title: initiative.title || "",
-                theme: initiative.theme || "",
-                deliverable: initiative.deliverable || "",
-                avaliation_criteria: initiative.avaliation_criteria || "",
-                context: initiative.context || ""
-            });
-        }
-    }, [initiative]);
+const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
+    const safe = initiative ?? {};
 
-    const handleFieldChange = (field: string, value: string) => {
-        setEditableInitiative(prev => ({
-            ...prev,
-            [field]: value
-        }));
+    const update = (patch: Partial<ChatInitiative>) => {
+        onChange?.({ ...safe, ...patch });
     };
 
     return (
-        <div className="bg-white rounded-lg flex flex-col overflow-hidden">
-            <div className="p-3 border-b flex-shrink-0">
+        <div className="bg-white rounded-lg">
+            <div className="p-4 border-b">
                 <h2 className="font-semibold text-lg text-gray-800">Preview da Ideia</h2>
-                <p className="text-sm font-medium text-gray-500 mt-1">
-                    Estrutura que será criada baseada na conversa.
-                </p>
-                <p className="text-sm font-medium text-gray-500 mt-1">
-                    Edite se necessário e publique!
-                </p>
             </div>
-  
-            <div className="p-3 space-y-3 flex-1 overflow-y-auto">
+
+            <div className="p-4 space-y-4">
                 <div>
                     <Label htmlFor="initiative-title">Título</Label>
-                    <Input 
+                    <Input
                         className="bg-gray-100"
-                        id="initiative-title" 
-                        type="text" 
-                        value={editableInitiative.title}
-                        onChange={(e) => handleFieldChange('title', e.target.value)}
-                        placeholder="Aguardando informações da conversa..." 
-                    />
-                </div>
-    
-                <div>
-                    <Label htmlFor="initiative-theme">Tema</Label>
-                    <Input 
-                        className="bg-gray-100"
-                        id="initiative-theme" 
-                        type="text" 
-                        value={editableInitiative.theme}
-                        onChange={(e) => handleFieldChange('theme', e.target.value)}
-                        placeholder="Aguardando informações da conversa..." 
+                        id="initiative-title"
+                        type="text"
+                        placeholder="..."
+                        value={safe.title ?? ""}
+                        onChange={(e) => update({ title: e.target.value })}
                     />
                 </div>
 
                 <div>
-                    <Label htmlFor="initiative-deliverable">Entregável</Label>
-                    <Input 
+                    <Label htmlFor="initiative-theme">Tema</Label>
+                    <Input
                         className="bg-gray-100"
-                        id="initiative-deliverable" 
-                        type="text" 
-                        value={editableInitiative.deliverable}
-                        onChange={(e) => handleFieldChange('deliverable', e.target.value)}
-                        placeholder="Aguardando informações da conversa..." 
-                    />
-                </div>
-    
-                <div>
-                    <Label htmlFor="initiative-criteria">Critérios de Avaliação</Label>
-                    <Input 
-                        className="bg-gray-100"
-                        id="initiative-criteria" 
-                        type="text" 
-                        value={editableInitiative.avaliation_criteria}
-                        onChange={(e) => handleFieldChange('avaliation_criteria', e.target.value)}
-                        placeholder="Aguardando informações da conversa..." 
+                        id="initiative-theme"
+                        type="text"
+                        placeholder="..."
+                        value={safe.theme ?? ""}
+                        onChange={(e) => update({ theme: e.target.value })}
                     />
                 </div>
 
                 <div>
                     <Label htmlFor="initiative-context">Contexto</Label>
                     <textarea
-                        className="w-full p-2 bg-gray-100 border border-gray-200 rounded-lg resize-none"
+                        className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
                         id="initiative-context"
                         rows={3}
-                        value={editableInitiative.context}
-                        onChange={(e) => handleFieldChange('context', e.target.value)}
-                        placeholder="Aguardando informações da conversa..."
+                        value={safe.context ?? ""}
+                        onChange={(e) => update({ context: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="initiative-deliverable">Entregável</Label>
+                    <Input
+                        className="bg-gray-100"
+                        id="initiative-deliverable"
+                        type="text"
+                        placeholder="..."
+                        value={safe.deliverable ?? ""}
+                        onChange={(e) => update({ deliverable: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="initiative-description">Descrição</Label>
+                    <textarea
+                        className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
+                        id="initiative-description"
+                        rows={4}
+                        value={safe.description ?? ""}
+                        onChange={(e) => update({ description: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="initiative-evaluation">Critérios de Avaliação</Label>
+                    <textarea
+                        className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
+                        id="initiative-evaluation"
+                        rows={3}
+                        value={safe.evaluationCriteria ?? ""}
+                        onChange={(e) => update({ evaluationCriteria: e.target.value })}
                     />
                 </div>
             </div>
-  
-            <div className="p-3 border-t flex gap-2 justify-between flex-shrink-0">
-                <button className="px-6 py-2 font-medium text-sm bg-gray-100 hover:bg-gray-300 rounded-lg transition-colors">
+
+            <div className="p-4 border-t flex gap-2 justify-between">
+                <button className="px-8 py-2 font-medium text-sm bg-gray-100 hover:bg-gray-300 rounded-lg transition-colors">
                     Cancelar
                 </button>
-                <button className="px-6 py-2 font-medium text-sm bg-[var(--green-primary)] text-white rounded-lg hover:bg-green-700 transition-colors">
+                <button className="px-8 py-2 font-medium text-sm bg-[var(--green-primary)] text-white rounded-lg hover:bg-green-700 transition-colors">
                     Publicar Ideia
                 </button>
             </div>
         </div>
     );
-}; 
+};
 
 export default ChatInitiativePreview;
