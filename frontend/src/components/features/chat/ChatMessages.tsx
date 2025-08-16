@@ -1,55 +1,73 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Send, ArrowLeft } from 'lucide-react';
 import { getAvatarClasses, getAvatarEmoji, getMessageClasses } from "@/utils/functions/functionsChat";
 import { Input } from "@/ui/input";
 import type { Message } from "@/types/index";
+import { agentService, type ChatInitiative } from "@/services/agent";
 
-const messages: Message[] = [
-    {
-        id: "1",
-        author: "ia",
-        text: "Olá, John Doe! 👋 Estou aqui para te ajudar a criar uma nova ideia para a empresa. Vamos começar? Me conte sobre sua proposta..."
-    },
-    {
-        id: "2",
-        author: "user",
-        text: "Olá! Tenho uma ideia sobre melhorar nosso processo de onboarding de novos funcionários. Acho que isso pode aumentar a produtividade e engajamento desde o início. Você pode me ajudar a estruturar isso?"
-    },
-    {
-        id: "3",
-        author: "ia",
-        text: "Interessante! Problemas no onboarding realmente afetam a produtividade e o engajamento dos novos funcionários. Vamos começar definindo os principais pontos que você gostaria de abordar. Quais são os maiores desafios que você vê atualmente nesse processo?"
-    },
-    {
-        id: "4",
-        author: "ia",
-        text: "Olá, John Doe! 👋 Estou aqui para te ajudar a criar uma nova ideia para a empresa. Vamos começar? Me conte sobre sua proposta..."
-    },
-    {
-        id: "5",
-        author: "user",
-        text: "Olá! Tenho uma ideia sobre melhorar nosso processo de onboarding de novos funcionários. Acho que isso pode aumentar a produtividade e engajamento desde o início. Você pode me ajudar a estruturar isso?"
-    },
-    {
-        id: "6",
-        author: "ia",
-        text: "Interessante! Problemas no onboarding realmente afetam a produtividade e o engajamento dos novos funcionários. Vamos começar definindo os principais pontos que você gostaria de abordar. Quais são os maiores desafios que você vê atualmente nesse processo?"
-    },
+const initialIaGreeting: Message = {
+    id: "seed-ia-1",
+    author: "ia",
+    text: "Olá! 👋 Vou te ajudar a estruturar sua ideia. Me conte sobre sua proposta."
+};
 
-];
+type Props = {
+    onInitiativeUpdate?: (initiative: ChatInitiative | null) => void;
+};
 
-const ChatMessages = () => {
+const ChatMessages = ({ onInitiativeUpdate }: Props) => {
     const [inputMessage, setInputMessage] = useState('');
+    const [messages, setMessages] = useState<Message[]>([initialIaGreeting]);
 
     const navigate = useNavigate();
 
     const goToPreviousScreen = () => {
         navigate(-1);
     };
+
+    useEffect(() => {
+        agentService.connect();
+        const unsub = agentService.subscribe(({ message, initiative }) => {
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: String(Date.now()),
+                    author: "ia",
+                    text: message,
+                },
+            ]);
+            onInitiativeUpdate?.(initiative);
+        });
+        return () => {
+            unsub();
+        };
+    }, [onInitiativeUpdate]);
+
+    // Auto-scroll to bottom on new messages
+    const messagesRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        const el = messagesRef.current;
+        if (el) {
+            el.scrollTop = el.scrollHeight;
+        }
+    }, [messages]);
+
+    const handleSend = () => {
+        const text = inputMessage.trim();
+        if (!text) return;
+        // Push user message locally
+        setMessages((prev) => [
+            ...prev,
+            { id: String(Date.now()), author: "user", text },
+        ]);
+        // Send to agent
+        agentService.sendMessage(text);
+        setInputMessage('');
+    };
   
     return (
-        <div className="flex flex-col h-full bg-white rounded-lg">
+        <div className="flex flex-col h-[80vh] bg-white rounded-lg overflow-hidden">
             <div className="bg-[var(--green-primary)] text-white p-4 rounded-t-lg">
                 <div className="flex items-center gap-3 mb-2">
                     <button
@@ -60,13 +78,9 @@ const ChatMessages = () => {
                     </button> 
                     <h2 className="font-semibold text-lg">Assistente de Criação</h2>
                 </div>
-                <p className="text-sm font-medium">
-                    Vou te ajudar a estruturar sua ideia de forma clara e completa.
-                    Fale naturalmente sobre sua proposta!
-                </p>
             </div>
         
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            <div ref={messagesRef} className="flex-1 p-4 overflow-y-auto space-y-4">
                 {messages.map((message) => (
                     <div
                         key={message.id}
@@ -100,11 +114,18 @@ const ChatMessages = () => {
                         type="text"
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                handleSend();
+                            }
+                        }}
                         placeholder="Digite sua mensagem..."
                         style={{ borderRadius: '25px' }}
                     />
                     <button
                         className="bg-[var(--green-primary)] text-white p-3 rounded-3xl hover:bg-green-700 transition-colors focus:outline-none"
+                        onClick={handleSend}
                     >
                         <Send className="w-5 h-5" />
                     </button>
@@ -112,6 +133,7 @@ const ChatMessages = () => {
             </div>
         </div>
     );
-};
+}
+;
 
 export default ChatMessages;

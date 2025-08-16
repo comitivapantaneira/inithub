@@ -1,61 +1,70 @@
 import { Label } from "@/ui/label";
 import { Input } from "@/ui/input";
+import type { ChatInitiative } from "@/services/agent";
 
-const ChatInitiativePreview = () => {
+type Props = {
+    initiative: ChatInitiative | null;
+    onChange?: (value: ChatInitiative | null) => void;
+};
+
+const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
+    const safe = initiative ?? {};
+
+    const update = (patch: Partial<ChatInitiative>) => {
+        onChange?.({ ...safe, ...patch });
+    };
+
     return (
         <div className="bg-white rounded-lg">
             <div className="p-4 border-b">
                 <h2 className="font-semibold text-lg text-gray-800">Preview da Ideia</h2>
-                <p className="text-sm font-medium text-gray-500 mt-1">
-                    Estrutura que será criada baseada na conversa.
-                </p>
-                <p className="text-sm font-medium text-gray-500 mt-1">
-                    Edite se necessário e publique!
-                </p>
             </div>
-  
+
             <div className="p-4 space-y-4">
                 <div>
                     <Label htmlFor="initiative-title">Título</Label>
-                    <Input 
+                    <Input
                         className="bg-gray-100"
-                        id="initiative-title" 
-                        type="text" 
-                        placeholder="..." 
-                        required 
-                    />
-                </div>
-    
-                <div>
-                    <Label htmlFor="initiative-title">Categoria</Label>
-                    <Input 
-                        className="bg-gray-100"
-                        id="initiative-category" 
-                        type="text" 
-                        placeholder="..." 
-                        required 
+                        id="initiative-title"
+                        type="text"
+                        placeholder="..."
+                        value={safe.title ?? ""}
+                        onChange={(e) => update({ title: e.target.value })}
                     />
                 </div>
 
                 <div>
-                    <Label htmlFor="initiative-title">Setores Envolvidos</Label>
-                    <Input 
+                    <Label htmlFor="initiative-theme">Tema</Label>
+                    <Input
                         className="bg-gray-100"
-                        id="initiative-sectors" 
-                        type="text" 
-                        placeholder="..." 
-                        required 
+                        id="initiative-theme"
+                        type="text"
+                        placeholder="..."
+                        value={safe.theme ?? ""}
+                        onChange={(e) => update({ theme: e.target.value })}
                     />
                 </div>
-    
+
                 <div>
-                    <Label htmlFor="initiative-title">Beneficios</Label>
-                    <Input 
+                    <Label htmlFor="initiative-context">Contexto</Label>
+                    <textarea
+                        className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
+                        id="initiative-context"
+                        rows={3}
+                        value={safe.context ?? ""}
+                        onChange={(e) => update({ context: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="initiative-deliverable">Entregável</Label>
+                    <Input
                         className="bg-gray-100"
-                        id="initiative-benefits" 
-                        type="text" 
-                        placeholder="..." 
-                        required 
+                        id="initiative-deliverable"
+                        type="text"
+                        placeholder="..."
+                        value={safe.deliverable ?? ""}
+                        onChange={(e) => update({ deliverable: e.target.value })}
                     />
                 </div>
 
@@ -65,10 +74,23 @@ const ChatInitiativePreview = () => {
                         className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
                         id="initiative-description"
                         rows={4}
+                        value={safe.description ?? ""}
+                        onChange={(e) => update({ description: e.target.value })}
+                    />
+                </div>
+
+                <div>
+                    <Label htmlFor="initiative-evaluation">Critérios de Avaliação</Label>
+                    <textarea
+                        className="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
+                        id="initiative-evaluation"
+                        rows={3}
+                        value={safe.evaluationCriteria ?? ""}
+                        onChange={(e) => update({ evaluationCriteria: e.target.value })}
                     />
                 </div>
             </div>
-  
+
             <div className="p-4 border-t flex gap-2 justify-between">
                 <button className="px-8 py-2 font-medium text-sm bg-gray-100 hover:bg-gray-300 rounded-lg transition-colors">
                     Cancelar
@@ -79,6 +101,6 @@ const ChatInitiativePreview = () => {
             </div>
         </div>
     );
-}; 
+};
 
 export default ChatInitiativePreview;
