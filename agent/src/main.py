@@ -1,6 +1,6 @@
-from src.chain import chain
+from src.workflow.chain import chain
 from src.config import logger
-from src.schemas import State, Initiative
+from src.schemas.agent import State
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles

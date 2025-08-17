@@ -9,7 +9,7 @@ Agent: Ótimo! Para começarmos o registro da sua iniciativa, poderia me explica
 User: Minha ideia é criar um portal interativo que oriente novos investidores sobre produtos, riscos e oportunidades do mercado de capitais.
 Agent: Ótimo, já entendi que a iniciativa está relacionada ao processo de onboarding de novos investidores na bolsa. Agora, para registrar corretamente, poderia me informar qual seria o entregável dessa iniciativa? Por exemplo, você espera criar um novo material educativo, uma plataforma digital, um guia passo a passo, ou outro tipo de solução?
 
-User: O entregável é o portal online com trilhas de aprendizado personalizadas.
+User: O entregável é um portal online com trilhas de aprendizado personalizadas.
 Agent: Entendi, sua ideia é criar um portal interativo para orientar novos investidores sobre produtos, riscos e oportunidades do mercado de capitais. Agora, para registrar corretamente, você poderia me dizer quais seriam os critérios de avaliação dessa iniciativa? Ou seja, como saberemos se o portal está atingindo os objetivos propostos? Por exemplo, número de acessos, satisfação dos usuários, redução de dúvidas recorrentes, entre outros.
 
 User: Número de acessos, taxa de conclusão das trilhas e feedback dos usuários.
