@@ -27,7 +27,6 @@ const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
                         className="bg-gray-100"
                         id="initiative-title"
                         type="text"
-                        placeholder="..."
                         value={safe.title ?? ""}
                         onChange={(e) => update({ title: e.target.value })}
                     />
@@ -39,14 +38,13 @@ const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
                         className="bg-gray-100"
                         id="initiative-theme"
                         type="text"
-                        placeholder="..."
                         value={safe.theme ?? ""}
                         onChange={(e) => update({ theme: e.target.value })}
                     />
                 </div>
 
                 <div>
-                    <Label htmlFor="initiative-context">Contexto</Label>
+                    <Label htmlFor="initiative-context">Descrição</Label>
                     <textarea
                         className="w-full text-sm p-3 bg-gray-100 border border-gray-200 rounded-lg resize-none"
                         id="initiative-context"
@@ -62,7 +60,6 @@ const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
                         className="bg-gray-100"
                         id="initiative-deliverable"
                         type="text"
-                        placeholder="..."
                         value={safe.deliverable ?? ""}
                         onChange={(e) => update({ deliverable: e.target.value })}
                     />
