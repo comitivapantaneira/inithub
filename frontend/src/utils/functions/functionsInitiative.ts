@@ -51,3 +51,11 @@ export function calcProgress(initiative: Initiative) {
   const completedUpdates = initiative.updates.filter(update => update.isCompleted).length;
   return Math.round((completedUpdates / initiative.updates.length) * 100);
 }
+
+export function getLikeButtonStyles(isLiked: boolean) {
+  return `flex items-center space-x-2 transition-colors ${
+    isLiked 
+      ? 'text-red-600' 
+      : 'text-gray-600 hover:text-red-600'
+  }`;
+}

@@ -5,24 +5,18 @@ import { useComments } from "@/hooks/useComments";
 
 interface CommentSectionProps {
   initiative: Initiative;
+  onCommentAdded?: (comment: any) => void;
 }
 
-const CommentSection = ({ initiative }: CommentSectionProps) => {
+const CommentSection = ({ initiative, onCommentAdded }: CommentSectionProps) => {
   const {
     comments,
     commentText,
     setCommentText,
-    replyingTo,
-    setReplyingTo,
-    replyText,
-    setReplyText,
-    expandedReplies,
     currentUser,
-    handleCommentLike,
     handleCommentSubmit,
-    handleReplySubmit,
-    toggleReplies
-  } = useComments(initiative.comments, initiative);
+    handleDeleteComment,
+  } = useComments(initiative.comments, initiative, onCommentAdded);
 
   return (
     <div className="space-y-4">
@@ -32,17 +26,11 @@ const CommentSection = ({ initiative }: CommentSectionProps) => {
         </h4>
         
         {comments.map((comment) => (
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            replyingTo={replyingTo}
-            setReplyingTo={setReplyingTo}
-            replyText={replyText}
-            setReplyText={setReplyText}
-            expandedReplies={expandedReplies}
-            onCommentLike={handleCommentLike}
-            onReplySubmit={handleReplySubmit}
-            onToggleReplies={toggleReplies}
+          <CommentItem 
+            key={comment.id} 
+            comment={comment} 
+            currentUser={currentUser}
+            onDeleteComment={handleDeleteComment} 
           />
         ))}
       </div>

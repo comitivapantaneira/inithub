@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import InitiativeCard from '@/components/features/initiatives/InitiativeCard';
 import Filters from '@/components/features/filters/Filters';
 import Aside from '@/components/layout/Aside';
-import Initiatives from '@/utils/data/initiatives-data';
+import { initiativesService } from '@/services/initiatives';
 import type { Initiative } from '@/types/initiative';
 
 const Home = () => {
@@ -10,8 +10,16 @@ const Home = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const filtered = Initiatives.filter(initiative => initiative.status !== 'REJECTED');
-    setInitiatives(filtered);
+    const fetchInitiatives = async () => {
+      try {
+        const data = await initiativesService.getInitiatives();
+        setInitiatives(data);
+      } catch (error) {
+        console.error("Erro ao buscar iniciativas:", error);
+      }
+    };
+
+    fetchInitiatives();
   }, []);
 
   return (
@@ -45,18 +53,25 @@ const Home = () => {
                       </svg>
                     </button>
                   </div>
-                  <Aside />
+                  <Aside initiatives={initiatives} />
                 </div>
               </div>
             </div>
           )}
 
           <div className="hidden lg:block">
-            <Aside />
+            <Aside initiatives={initiatives} />
           </div>
 
           <div className="flex-1 min-w-0 space-y-4 sm:space-y-6">
-            <Filters initiatives={initiatives} />
+            <Filters initiatives={initiatives} onChange={async (params) => {
+              try {
+                const data = await initiativesService.getInitiatives(params);
+                setInitiatives(data);
+              } catch (err) {
+                console.error('Erro ao buscar iniciativas com filtros', err);
+              }
+            }} />
             
             <div className="space-y-4 sm:space-y-6">
               {initiatives.map((initiative) => (

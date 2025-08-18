@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import type { Initiative } from "@/types/initiative";
 
 const categories = [
     'Tecnologia',
@@ -9,7 +9,18 @@ const categories = [
     'Cultura'
 ];
 
-const Aside = () => {
+type AsideProps = {
+  initiatives: Initiative[];
+};
+
+const Aside = ({ initiatives }: AsideProps) => {
+    const total = initiatives.length;
+    const inExecution = initiatives.filter(i => i.status === "IN_EXECUTION").length;
+    const completed = initiatives.filter(i => i.status === "COMPLETED").length;
+    const pending = initiatives.filter(i => i.status === "PENDING").length;
+    const approved = initiatives.filter(i => i.status === "APPROVED").length;
+    const rejected = initiatives.filter(i => i.status === "REJECTED").length;
+    
     return (
         <div className="w-full lg:w-64 space-y-4 lg:space-y-6">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 lg:p-6">
@@ -17,15 +28,27 @@ const Aside = () => {
                 <div className="space-y-2 lg:space-y-3">
                     <div className="flex items-center justify-between">
                         <span className="text-xs lg:text-sm text-gray-600">Iniciativas Totais</span>
-                        <span className="font-semibold text-gray-900 text-sm lg:text-base">156</span>
+                        <span className="font-semibold text-gray-900 text-sm lg:text-base">{total}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs lg:text-sm text-gray-600">Pendentes</span>
+                        <span className="font-semibold text-yellow-500 text-sm lg:text-base">{pending}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs lg:text-sm text-gray-600">Aprovadas</span>
+                        <span className="font-semibold text-blue-500 text-sm lg:text-base">{approved}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <span className="text-xs lg:text-sm text-gray-600">Rejeitadas</span>
+                        <span className="font-semibold text-red-500 text-sm lg:text-base">{rejected}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-xs lg:text-sm text-gray-600">Em Execução</span>
-                        <span className="font-semibold text-purple-600 text-sm lg:text-base">23</span>
+                        <span className="font-semibold text-purple-600 text-sm lg:text-base">{inExecution}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <span className="text-xs lg:text-sm text-gray-600">Concluídas</span>
-                        <span className="font-semibold text-green-600 text-sm lg:text-base">89</span>
+                        <span className="font-semibold text-green-600 text-sm lg:text-base">{completed}</span>
                     </div>
                 </div>
             </div>
@@ -51,7 +74,6 @@ const Aside = () => {
                         <span className="text-xs text-gray-500">Plataforma de Inovação</span>
                     </div>
                 </div>
-                <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4 text-gray-400" />
             </div>
         </div>
     )

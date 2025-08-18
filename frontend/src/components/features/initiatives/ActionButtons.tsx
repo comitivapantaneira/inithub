@@ -1,6 +1,10 @@
-import { ArrowRight, Heart, MessageCircle, Share2, Settings } from "lucide-react";
-import type { Initiative } from "@/types/initiative";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ArrowRight, Heart, MessageCircle, Share2, Settings } from "lucide-react";
+import { initiativesService } from "@/services/initiatives";
+import { authService } from "@/services/auth";
+import { getLikeButtonStyles } from "@/utils/functions/functionsInitiative";
+import type { Initiative } from "@/types/initiative";
 
 interface ActionButtonsProps {
   initiative: Initiative;
@@ -10,17 +14,51 @@ interface ActionButtonsProps {
 
 const ActionButtons = ({ initiative, onToggleComments, isManaged = false }: ActionButtonsProps) => {
   const navigate = useNavigate();
+  const user = authService.getUserFromLocalStorage();
+  const userId = user ? user.id : "xxxx-xxxx-xxxx";
+
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(initiative.likes.length ?? 0);
+
+  useEffect(() => {
+    const isLiked = initiative.likes.some(l => l.userId === userId);
+    setLiked(isLiked);
+    setLikesCount(initiative.likes.length ?? 0);
+  }, [initiative.likes, userId]);
 
   const handleProgressClick = () => {
     navigate(`/initiatives/${initiative.id}/progress`);
   };
 
+  const handleLikeClick = () => {
+    if (liked) {
+      setLiked(false);
+      setLikesCount(c => Math.max(0, c - 1));
+      initiativesService.unlikeInitiative(initiative.id, userId).catch((err) => {
+        console.warn('Failed to unlike initiative, reverting', err);
+        setLiked(true);
+        setLikesCount(c => c + 1);
+      });
+    } else {
+      setLiked(true);
+      setLikesCount(c => c + 1);
+      initiativesService.likeInitiative(initiative.id, userId).catch((err) => {
+        console.warn('Failed to like initiative, reverting', err);
+        setLiked(false);
+        setLikesCount(c => Math.max(0, c - 1));
+      });
+    }
+  };
+
   return (
     <div className="px-6 py-3 bg-gray-50 flex items-center justify-between">
       <div className="flex items-center space-x-6">
-        <button className="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors">
-          <Heart className="w-5 h-5" />
-          <span className="text-sm">{initiative.likes.length}</span>
+        <button
+          className={getLikeButtonStyles(liked)}
+          onClick={handleLikeClick}
+        >
+          <Heart className={`w-5 h-5 ${liked ? 'fill-current' : ''}`} />
+          <span className="text-sm">{likesCount}</span>
         </button>
 
         <button 
@@ -33,7 +71,7 @@ const ActionButtons = ({ initiative, onToggleComments, isManaged = false }: Acti
 
         <button className="flex items-center space-x-2 text-gray-600 hover:text-green-600 transition-colors">
           <Share2 className="w-5 h-5" />
-          <span className="text-sm">Compartilhar</span>
+          <span className="text-sm hidden md:inline">Compartilhar</span>
         </button>
       </div>
 
