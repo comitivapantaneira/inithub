@@ -7,7 +7,6 @@ import Header from "@/components/layout/Header";
 import Home from "@/pages/Home";
 import MyInitiatives from "@/pages/MyInitiatives";
 import ProgressInitiative from "@/pages/ProgressInitiative";
-import Screening from "@/pages/Screening";
 import ProtectedRoute from "@/components/routing/ProtectedRoute";
 import AdminRoute from "@/components/routing/AdminRoute";
 
@@ -96,7 +95,7 @@ export default function App() {
           element={
             <AdminRoute>
               <LayoutWithHeader>
-                <Screening />
+                <h1>Triagem</h1>
               </LayoutWithHeader>
             </AdminRoute>
           }
