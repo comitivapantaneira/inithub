@@ -2,7 +2,7 @@ const Banner = () => {
     return (
         <div className="h-screen w-full relative">
             <img 
-                src="/images/banner.jpg"
+                src="/images/login-banner.jpg"
                 alt="Image"
                 className="absolute inset-0 w-full h-full object-cover"
             />
