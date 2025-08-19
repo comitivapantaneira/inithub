@@ -1,6 +1,5 @@
-# Inithub Backend API
-
-NestJS API para gestão de iniciativas colaborativas com recursos sociais básicos.
+# backend
+⚙️ Repositório destinado a armazenar todos os componentes relacionados ao backend da aplicação.
 
 ## 🚀 Tecnologias
 
@@ -12,80 +11,37 @@ NestJS API para gestão de iniciativas colaborativas com recursos sociais básic
 
 ## 📋 Funcionalidades
 
-### Iniciativas (CRUD)
-- Criar, listar, visualizar, editar e excluir iniciativas
-- Aprovar iniciativas
+- **Iniciativas (CRUD)** – Criar, listar, visualizar, editar e excluir iniciativas. Inclui funcionalidade de aprovação de iniciativas.
+- **Recursos Sociais** – Sistema de likes e comentários nas iniciativas para interação entre usuários.
+- **Embeddings** – Geração assíncrona de embeddings ao criar uma iniciativa e busca por similaridade via pgvector.
+- **Usuários** – Gerenciamento completo de usuários com endpoints para todas as operações CRUD.
+- **Autenticação** – Sistema de autenticação JWT para controle de acesso aos recursos.
 
-### Recursos Sociais
-- Sistema de likes
-- Comentários nas iniciativas
+## 📄 Documentação
 
-### Embeddings
-- Geração assíncrona de embeddings ao criar uma iniciativa
-- Busca por similaridade de iniciativas via pgvector
+A documentação da API é gerada automaticamente pelo Swagger. Para acessá-la, inicie o servidor e navegue para /api/.
 
-### Usuários
-- Gerenciamento de usuários com endpoints para CRUD
-
-## 🛠️ Instalação
-
-```bash
-# Instalar dependências
-npm install
-
-# Variáveis de ambiente
-cp .env.example .env
-# Edite o arquivo .env e defina DATABASE_URL e OPENAI_API_KEY
-
-# Configurar banco de dados
-docker-compose up -d
-
-# Executar migrações
-npx prisma migrate dev
-
-# Gerar cliente Prisma
-npx prisma generate
+## 📁 Estrutura do Projeto
 ```
-
-> Requisitos: PostgreSQL com a extensão `pgvector` habilitada.
-
-## 🏃♂️ Executar
-
-```bash
-# Desenvolvimento
-npm run start:dev
-
-# Produção
-npm run build
-npm run start:prod
+src/
+├── auth/               # Autenticação e autorização
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   └── dto/            # Data Transfer Objects
+├── initiatives/        # CRUD de iniciativas
+│   ├── initiatives.controller.ts
+│   ├── initiatives.service.ts
+│   └── dto/            # DTOs específicos de iniciativas
+├── users/              # Gerenciamento de usuários
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   └── dto/            # DTOs de usuários
+├── embeddings/         # Busca semântica com IA
+│   ├── embeddings.controller.ts
+│   ├── embeddings.service.ts
+│   └── dto/            # DTOs de embeddings
+├── prisma/             # Configuração do Prisma ORM
+│   ├── prisma.module.ts
+│   └── prisma.service.ts
+└── main.ts             # Bootstrap da aplicação
 ```
-
-## 📚 API Endpoints
-
-### Iniciativas
-- `GET /initiatives` - Listar todas
-- `POST /initiatives` - Criar
-- `GET /initiatives/:id` - Visualizar uma
-- `PATCH /initiatives/:id` - Editar
-- `DELETE /initiatives/:id` - Excluir
-- `PATCH /initiatives/:id/approve` - Aprovar
-
-### Recursos Sociais
-- `POST /initiatives/:id/like` - Adicionar like
-- `POST /initiatives/:id/comments` - Adicionar comentário
-
-### Usuários
-- `GET /users` - Listar usuários
-- `POST /users` - Criar usuário
-- `GET /users/:id` - Visualizar usuário
-- `PATCH /users/:id` - Atualizar usuário
-- `DELETE /users/:id` - Excluir usuário
-
-### Embeddings
-- `POST /embeddings/similar` - Buscar iniciativas similares por texto
-
-## 📖 Documentação
-
-Acesse `http://localhost:3000/api` para ver a documentação Swagger.
-
-## 🧪 Testes
