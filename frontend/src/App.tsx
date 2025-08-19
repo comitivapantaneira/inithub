@@ -80,17 +80,6 @@ export default function App() {
         />
 
         <Route
-          path="/news"
-          element={
-            <ProtectedRoute>
-              <LayoutWithHeader>
-                <h1>Notícias</h1>
-              </LayoutWithHeader>
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
           path="/screening"
           element={
             <AdminRoute>

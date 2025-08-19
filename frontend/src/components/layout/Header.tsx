@@ -8,7 +8,6 @@ import type { NavLink } from "@/types/index";
 const navLinks: NavLink[] = [
   { label: "Home", path: "/home" },
   { label: "Minhas Iniciativas", path: "/my-initiatives" },
-  { label: "Notícias", path: "/news" },
   { label: "Triagem", path: "/screening", onlySpecific: true }
 ];
 
