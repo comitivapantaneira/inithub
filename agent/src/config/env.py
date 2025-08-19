@@ -7,6 +7,8 @@ load_dotenv()
 
 LOGGING_LEVEL = os.getenv("LOGGING_LEVEL", "info")
 
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:3000")
+
 OPENROUTER_MODEL_NAME = os.getenv("OPENROUTER_MODEL_NAME", "openai/gpt-4.1-nano")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 OPENROUTER_ENDPOINT = os.getenv("OPENROUTER_ENDPOINT", "https://openrouter.ai/api/v1")

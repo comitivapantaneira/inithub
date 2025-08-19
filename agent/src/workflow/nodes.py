@@ -1,3 +1,4 @@
+from src.services.backend import find_similar_embeddings
 from src.workflow.decorators import log_node, with_prompt
 from src.schemas.agent import State, FlowClassifier, Initiative
 from src.llms import default_llm
@@ -92,24 +93,6 @@ def register_initiative(state: State, prompt_template=None):
 
 
 @log_node
-def is_initiative_complete(state: State):
-    new_initiative = state.get("initiative") or {}
-
-    if new_initiative and all(
-        [
-            new_initiative.title,
-            new_initiative.context,
-            new_initiative.theme,
-            new_initiative.deliverable,
-            new_initiative.avaliation_criteria,
-        ]
-    ):
-        return {"next": "save_initiative"}
-    else:
-        return {"next": "register_initiative"}
-
-
-@log_node
 @with_prompt()
 def extract_initiative(state: State, prompt_template=None, add_comportamentals=True):
     new_initiative = state.get("initiative") or Initiative(
@@ -154,13 +137,35 @@ def extract_initiative(state: State, prompt_template=None, add_comportamentals=T
 
 
 @log_node
-def find_initiative(state: State):
+@with_prompt()
+def find_initiative(state: State, prompt_template=None, add_comportamentals=True):
+    threshold = 0.75
+    initiative = state.get("initiative")
+
+    similar_initiatives = []
+
+    if initiative:
+        found_initiatives = find_similar_embeddings(initiative)
+        for item in found_initiatives:
+            if item.get("distance", 0) <= threshold:
+                similar_initiatives.append(item)
+
+    prompt_content = (prompt_template or "").format(
+        SIMILAR_INITIATIVES=similar_initiatives
+    )
+
+    logging.info(f"PROMP_FIND_INITIATIVE: {prompt_content}")
+
     result = {
-        "messages": [
-            AIMessage(
-                role="assistant",
-                content="Ótimo! Vou buscar no banco de iniciativas se ela já existe. Pode me dizer o nome ou uma breve descrição?",
-            )
-        ]
+        "messages": default_llm.invoke(
+            state["messages"]
+            + [
+                {
+                    "role": "system",
+                    "content": prompt_content,
+                }
+            ],
+        )
     }
+
     return result

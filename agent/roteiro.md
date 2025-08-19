@@ -19,8 +19,14 @@ User: Boa, sugestões estão corretas, pode salvar a iniciativa.
 Agent: Ótimo, aguarde um momento, estou registrando sua iniciativa!
 Agent: Iniciativa registrada com sucesso! Você pode revisar e complementar as informações em {INITIATIVE_URL}.
 
+
 ## Caminho Alternativo - Restaurante
 User: Olá, estou com uma iniciativa e preciso de uma ajuda sua para poder refina-la, é uma proposta para a humana mesmo para um restaurante dentro da propria empresa afinal muitos funcionarios perdem tempo durante as duas horas de almoço, onde ocorre atrasos.
+
+
+## Caminho Alternativo - Buscar iniciativa
+User: Olá, estou procurando iniciativas relacionadas a melhoria do processo de onboarding de novos investidores na bolsa. Você pode me ajudar a encontrar algo nesse sentido?
+
 
 ## Frase de Boas Vindas
 

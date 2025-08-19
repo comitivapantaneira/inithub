@@ -14,7 +14,8 @@ workflow.add_node("register_initiative", nodes.register_initiative)
 workflow.add_node("extract_initiative", nodes.extract_initiative)
 
 workflow.add_edge(START, "classify_user_request")
-workflow.add_edge("classify_user_request", "route_user_request")
+workflow.add_edge("classify_user_request", "extract_initiative")
+workflow.add_edge("extract_initiative", "route_user_request")
 workflow.add_conditional_edges(
     "route_user_request",
     lambda state: state.get("next"),
@@ -26,8 +27,7 @@ workflow.add_conditional_edges(
 )
 workflow.add_edge("guide", END)
 workflow.add_edge("find_initiative", END)
-workflow.add_edge("register_initiative", "extract_initiative")
-workflow.add_edge("extract_initiative", END)
+workflow.add_edge("register_initiative", END)
 
 chain = workflow.compile()
 
