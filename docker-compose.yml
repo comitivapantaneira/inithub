@@ -13,7 +13,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    command: sh -c "npx prisma migrate deploy && node dist/main.js"
+    command: >
+      sh -c "npx prisma migrate deploy &&
+            node dist/prisma/seed.js &&
+            node dist/src/main.js"
     networks:
       - init-hub-network
 
