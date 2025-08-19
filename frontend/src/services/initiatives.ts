@@ -1,4 +1,5 @@
 import api from "@/services/api";
+import { authService } from "@/services/auth";
 import type { Initiative } from "@/types/initiative";
 
 type GetInitiativesParams = {
@@ -136,6 +137,49 @@ class InitiativesService {
       return response.data;
     } catch (error) {
       console.error(`Erro ao atualizar conteúdo da atualização ${updateId}:`, error);
+      throw error;
+    }
+  }
+
+  async approveInitiative(initiativeId: string, assignedToId: string) {
+    const localAdmin = authService.getUserFromLocalStorage();
+    if (!localAdmin?.id) {
+      throw new Error('Sessão inválida. Faça login novamente.');
+    }
+
+    let assignedById = localAdmin.id;
+    try {
+      const authUser = await authService.getUserForAuth(localAdmin.id);
+      if (authUser?.id) assignedById = authUser.id;
+    } catch (e) {
+      try {
+        const loginResp = await authService.login(localAdmin.email);
+        if (loginResp?.user?.id) assignedById = loginResp.user.id;
+      } catch {
+        // keep fallback to localAdmin.id
+      }
+    }
+
+    try {
+      const response = await api.patch(`/initiatives/${initiativeId}/approve`, {
+        assignedToId,
+        assignedById,
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao aprovar iniciativa ${initiativeId}:`, error);
+      throw error;
+    }
+  }
+
+  async rejectInitiative(initiativeId: string) {
+    try {
+      const response = await api.patch(`/initiatives/${initiativeId}`, {
+        status: 'REJECTED',
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Erro ao rejeitar iniciativa ${initiativeId}:`, error);
       throw error;
     }
   }

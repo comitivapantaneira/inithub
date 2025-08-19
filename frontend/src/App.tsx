@@ -9,6 +9,7 @@ import MyInitiatives from "@/pages/MyInitiatives";
 import ProgressInitiative from "@/pages/ProgressInitiative";
 import ProtectedRoute from "@/components/routing/ProtectedRoute";
 import AdminRoute from "@/components/routing/AdminRoute";
+import AdministratorDashboard from "@/pages/AdministratorDashboard";
 
 function LayoutWithHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -95,7 +96,7 @@ export default function App() {
           element={
             <AdminRoute>
               <LayoutWithHeader>
-                <h1>Triagem</h1>
+                <AdministratorDashboard />
               </LayoutWithHeader>
             </AdminRoute>
           }
