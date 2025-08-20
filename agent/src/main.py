@@ -1,5 +1,6 @@
-from src.chain import chain
+from src.workflow.chain import chain
 from src.config import logger
+from src.schemas.agent import State
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -14,12 +15,16 @@ logger.setup_logging()
 @app.websocket("/ws/v1/agent")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    state = {"messages": [], "flow_type": None}
+    state: State = {"messages": [], "flow_type": None}
 
     while True:
-        data = await websocket.receive_text()
-        payload = json.loads(data)
-        user_msg = payload.get("message", "")
+        try:
+            data = await websocket.receive_text()
+            payload = json.loads(data)
+            user_msg = payload.get("message", "")
+        except Exception as e:
+            print(f"❌ WebSocket error: {e}")
+            break
 
         state["messages"].append({"role": "user", "content": user_msg})
 
@@ -27,7 +32,18 @@ async def websocket_endpoint(websocket: WebSocket):
 
         if state.get("messages"):
             last_msg = state["messages"][-1]
-            await websocket.send_text(json.dumps({"message": last_msg.content}))
+            initiative = state.get("initiative")
+            response_data = {
+                "message": last_msg.content,
+                "initiative": initiative.dict() if initiative else None,
+            }
+
+            try:
+                await websocket.send_text(json.dumps(response_data))
+                print("   ✅ Message sent successfully")
+            except Exception as e:
+                print(f"   ❌ Failed to send message: {e}")
+                break
 
 
 app.mount("/", StaticFiles(directory="ui", html=True), name="ui")

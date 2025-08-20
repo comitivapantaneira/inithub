@@ -1,4 +1,4 @@
-from src.chain import chain
+from src.workflow.chain import chain
 from src.config import logger
 
 import logging

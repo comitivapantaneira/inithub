@@ -1,17 +1,37 @@
-# Dockerfile para aplicação FastAPI
-FROM python:3.12-slim
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copia arquivos de dependências
-COPY pyproject.toml pyproject.toml
-RUN pip install .
+# Install system dependencies for Prisma (OpenSSL)
+RUN apk add --no-cache openssl
 
-# Copia o código da aplicação
-COPY ./src ./src
+# Install dependencies
+COPY package*.json ./
+RUN npm install
 
-# Expõe porta padrão do FastAPI
-EXPOSE 8000
+# Copy source code
+COPY . .
 
-# Comando para iniciar o servidor
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build the app
+RUN npm run build
+
+# Production image
+FROM node:20-alpine AS prod
+WORKDIR /app
+
+RUN apk add --no-cache openssl
+
+# Copy only built files and node_modules
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+COPY package*.json ./
+
+# Expose port
+EXPOSE 3000
+
+# Start the app
+CMD ["node", "dist/src/main.js"]
