@@ -24,8 +24,6 @@ type Comment = {
   initiativeId: string;
   user: User;
   initiative: Initiative;
-  likes: Like[];
-  replies: Comment[];
 };
 
 type Initiative = {

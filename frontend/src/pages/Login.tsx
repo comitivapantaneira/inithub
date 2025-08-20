@@ -10,7 +10,7 @@ const Login = () => {
 
             <div className="flex flex-col gap-4 p-6 md:p-10 bg-muted lg:ml-[60%] min-h-screen">
                 <div className="flex flex-1 items-center justify-center">
-                    <div className="w-full max-w-xs">
+                    <div className="w-full max-w-xl lg:max-w-2xl">
                         <LoginForm />
                     </div>
                 </div>

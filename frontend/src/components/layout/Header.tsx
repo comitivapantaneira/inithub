@@ -2,19 +2,27 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import UserDropdown from "@/components/layout/UserDropdown";
+import { useAuth } from "@/hooks/useAuth";
 import type { NavLink } from "@/types/index";
 
 const navLinks: NavLink[] = [
   { label: "Home", path: "/home" },
   { label: "Minhas Iniciativas", path: "/my-initiatives" },
-  { label: "Notícias", path: "/news" },
-  { label: "Triagem", path: "/screening" }
+  { label: "Triagem", path: "/screening", onlySpecific: true }
 ];
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
+  
+  const visibleNavLinks = navLinks.filter(link => {
+    if (link.onlySpecific) {
+      return user?.isAdmin === true;
+    }
+    return true;
+  });
 
   const goToCreateInitiative = () => {
     navigate("/create-initiative");
@@ -29,7 +37,7 @@ const Header = () => {
         </div>
 
         <nav className="hidden md:flex space-x-6">
-          {navLinks.map((link) => {
+          {visibleNavLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
               <Link
@@ -68,7 +76,7 @@ const Header = () => {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 px-4 pb-4">
           <div className="flex flex-col space-y-3 mt-3">
-            {navLinks.map((link) => {
+            {visibleNavLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <Link

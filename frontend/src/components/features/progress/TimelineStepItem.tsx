@@ -106,14 +106,14 @@ const TimelineStepItem = ({
             <div className="flex items-start justify-between">
               <div className="flex items-center space-x-3 mb-2">
                 <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-sm font-medium">
-                  {getAuthorInitials(update.author.name)}
+                  {getAuthorInitials(update.author?.name || 'Usuario')}
                 </div>
                 <div>
                   <div className="text-sm font-medium text-gray-900">
                     Atualização Postada
                   </div>
                   <div className="text-sm text-gray-500">
-                    {update.author.name} • {convertDateToString(update.createdAt)}
+                    {update.author?.name || 'Usuário desconhecido'}
                   </div>
                 </div>
               </div>

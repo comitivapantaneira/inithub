@@ -23,7 +23,7 @@ const CreateAccountFormStep2 = ({ onBack }: CreateAccountFormStep2Props) => {
                 className="bg-transparent"
                 id="email" 
                 type="email" 
-                placeholder="seu.email@empresa.com" 
+                placeholder="admin@inithub.com" 
                 required 
             />
         </div>

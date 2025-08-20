@@ -1,117 +1,62 @@
-// mock em nivel de frontend
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { initiativesService } from "@/services/initiatives";
 import type { Comment, Initiative } from "@/types/initiative";
+import type { User } from "@/types/user";
 
-export const useComments = (initialComments: Comment[], initiative: Initiative) => {
+export const useComments = (
+    initialComments: Comment[],
+    initiative: Initiative,
+    onCommentAdded?: (comment: Comment) => void,
+    onCommentRemoved?: (commentId: string) => void,
+) => {
     const [comments, setComments] = useState<Comment[]>(initialComments);
     const [commentText, setCommentText] = useState("");
-    const [replyingTo, setReplyingTo] = useState<string | null>(null);
-    const [replyText, setReplyText] = useState("");
-    const [expandedReplies, setExpandedReplies] = useState<Set<string>>(new Set());
+    const { user } = useAuth();
 
-     const currentUser = initiative.author;
-
-    const handleCommentLike = (commentId: string) => {
-        setComments((prev) => 
-            prev.map(comment => {
-                if (comment.id === commentId) {
-                    const isAlreadyLiked = comment.likes.some(like => like.userId === currentUser.id);
-                    if (!isAlreadyLiked) {
-                        const newLike = {
-                        id: `like-${Date.now()}`,
-                        userId: currentUser.id,
-                        initiativeId: initiative.id,
-                        createdAt: new Date(),
-                        user: currentUser,
-                        initiative: initiative
-                        };
-                        return {
-                        ...comment,
-                        likes: [...comment.likes, newLike]
-                        };
-                    }
-                }
-                return comment;
-            })
-        );
-    };
+    const currentUser = user ?? initiative.author;
 
     const handleCommentSubmit = () => {
-        if (commentText.trim() === "") return;
+        if (commentText.trim() === "" || !user) return;
 
-        const newComment: Comment = {
-            id: `comment-${Date.now()}`,
-            content: commentText,
-            createdAt: new Date(),
-            userId: currentUser.id,
-            initiativeId: initiative.id,
-            user: currentUser,
-            initiative: initiative,
-            likes: [],
-            replies: [],
-        };
-
-        setComments((prev) => [...prev, newComment]);
-        setCommentText("");
-    };
-
-    const handleReplySubmit = (parentCommentId: string) => {
-        if (replyText.trim() === "") return;
-
-        const newReply: Comment = {
-        id: `reply-${Date.now()}`,
-        content: replyText,
-        createdAt: new Date(),
-        userId: currentUser.id,
-        initiativeId: initiative.id,
-        user: currentUser,
-        initiative: initiative,
-        likes: [],
-        replies: [],
-        };
-
-        setComments((prev) => 
-            prev.map(comment => {
-                if (comment.id === parentCommentId) {
-                return {
-                    ...comment,
-                    replies: [...comment.replies, newReply]
+        initiativesService.createComment(initiative.id, commentText, user.id)
+            .then((res) => {
+                const newComment: Comment = {
+                    id: res?.data?.id ?? `comment-${Date.now()}`,
+                    content: commentText,
+                    createdAt: new Date(),
+                    userId: user.id,
+                    initiativeId: initiative.id,
+                    user: currentUser as User,
+                    initiative: initiative,
                 };
-                }
-                return comment;
+                setComments((prev) => [...prev, newComment]);
+                if (typeof onCommentAdded === 'function') onCommentAdded(newComment);
+                setCommentText("");
             })
-        );
-
-        setReplyText("");
-        setReplyingTo(null);
+            .catch(() => {
+                console.log("Error creating comment");
+            });
     };
 
-    const toggleReplies = (commentId: string) => {
-        setExpandedReplies(prev => {
-            const newSet = new Set(prev);
-            
-            if (newSet.has(commentId)) {
-                newSet.delete(commentId);
-            } else {
-                newSet.add(commentId);
-            }
-            return newSet;
-        });
+    const handleDeleteComment = (commentId: string) => {
+        if (!user) return;
+            initiativesService.deleteComment(initiative.id, commentId, user.id)
+                .then(() => {
+                    setComments((prev) => prev.filter(c => c.id !== commentId));
+                    if (typeof onCommentRemoved === 'function') onCommentRemoved(commentId);
+                })
+                .catch(() => {
+                    console.log("Error deleting comment");
+                });
     };
 
     return {
         comments,
         commentText,
         setCommentText,
-        replyingTo,
-        setReplyingTo,
-        replyText,
-        setReplyText,
-        expandedReplies,
         currentUser,
-        handleCommentLike,
         handleCommentSubmit,
-        handleReplySubmit,
-        toggleReplies
+        handleDeleteComment,
     };
 };

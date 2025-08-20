@@ -20,6 +20,8 @@ type Props = {
 const ChatMessages = ({ onInitiativeUpdate }: Props) => {
     const [inputMessage, setInputMessage] = useState('');
     const [messages, setMessages] = useState<Message[]>([initialIaGreeting]);
+    const [isAgentTyping, setIsAgentTyping] = useState(false);
+    const typingTimeoutRef = useRef<number | null>(null);
 
     const navigate = useNavigate();
 
@@ -30,6 +32,12 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
     useEffect(() => {
         agentService.connect();
         const unsub = agentService.subscribe(({ message, initiative }) => {
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = null;
+            }
+            
+            setIsAgentTyping(false);
             setMessages((prev) => [
                 ...prev,
                 {
@@ -42,6 +50,9 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
         });
         return () => {
             unsub();
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
         };
     }, [onInitiativeUpdate]);
 
@@ -52,16 +63,35 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
         if (el) {
             el.scrollTop = el.scrollHeight;
         }
-    }, [messages]);
+    }, [messages, isAgentTyping]);
 
     const handleSend = () => {
         const text = inputMessage.trim();
         if (!text) return;
+        
         // Push user message locally
         setMessages((prev) => [
             ...prev,
             { id: String(Date.now()), author: "user", text },
         ]);
+        
+        setIsAgentTyping(true);
+        
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+        typingTimeoutRef.current = setTimeout(() => {
+            setIsAgentTyping(false);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    id: String(Date.now()),
+                    author: "ia",
+                    text: "Desculpe, houve um problema de conexão. Tente novamente.",
+                },
+            ]);
+        }, 30000);
+        
         // Send to agent
         agentService.sendMessage(text);
         setInputMessage('');
@@ -108,6 +138,25 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
                     </div>
                     </div>
                 ))}
+                
+                {isAgentTyping && (
+                    <div className="flex justify-start">
+                        <div className="flex items-start gap-3 max-w-xs">
+                            <div className={getAvatarClasses("ia")}>
+                                {getAvatarEmoji("ia")}
+                            </div>
+                            <div className={`p-3 rounded-lg ${getMessageClasses("ia")}`}>
+                                <div className="flex items-center space-x-1">
+                                    <div className="flex space-x-1">
+                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
             
             <div className="p-4 border-t">
@@ -123,12 +172,14 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
                                 handleSend();
                             }
                         }}
-                        placeholder="Digite sua mensagem..."
+                        placeholder={isAgentTyping ? "Aguardando resposta..." : "Digite sua mensagem..."}
+                        disabled={isAgentTyping}
                         style={{ borderRadius: '25px' }}
                     />
                     <button
-                        className="bg-[var(--green-primary)] text-white p-3 rounded-3xl hover:bg-green-700 transition-colors focus:outline-none"
+                        className="bg-[var(--green-primary)] text-white p-3 rounded-3xl hover:bg-green-700 transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                         onClick={handleSend}
+                        disabled={isAgentTyping || !inputMessage.trim()}
                     >
                         <Send className="w-5 h-5" />
                     </button>

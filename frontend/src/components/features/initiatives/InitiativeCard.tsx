@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InitiativeHeader from "@/components/features/initiatives/InitiativeHeader";
 import InitiativeContent from "@/components/features/initiatives/InitiativeContent";
 import ProgressBar from "@/components/features/initiatives/ProgressBar";
@@ -13,6 +13,11 @@ interface InitiativeCardProps {
 
 const InitiativeCard = ({ initiative, isManaged = false }: InitiativeCardProps) => {
   const [showComments, setShowComments] = useState(false);
+  const [localInitiative, setLocalInitiative] = useState(initiative);
+
+  useEffect(() => {
+    setLocalInitiative(initiative);
+  }, [initiative]);
 
   return (
     <div className="bg-white rounded-lg lg:rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
@@ -22,14 +27,25 @@ const InitiativeCard = ({ initiative, isManaged = false }: InitiativeCardProps) 
         <ProgressBar initiative={initiative} />
 
         {showComments && (
-          <div className="pt-3 sm:pt-4 border-t border-gray-100">
-            <CommentsSection initiative={initiative} />
-          </div>
+          <>
+            <div className="pt-3 sm:pt-4 border-t border-gray-100">
+              <CommentsSection
+                initiative={localInitiative}
+                onCommentAdded={(comment) => {
+                  setLocalInitiative((prev) => ({
+                    ...prev,
+                    comments: [...prev.comments, comment],
+                    commentsCount: (prev.commentsCount ?? 0) + 1,
+                  }));
+                }}
+              />
+            </div>
+          </>
         )}
       </div>
 
       <ActionButtons 
-        initiative={initiative} 
+        initiative={localInitiative} 
         onToggleComments={() => setShowComments(!showComments)}
         isManaged={isManaged}
       />

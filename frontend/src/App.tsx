@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import Login from "@/pages/Login";
 import CreateInitiative from "@/pages/CreateInitiative";
 import CreateAccount from "@/pages/CreateAccount";
@@ -6,6 +7,9 @@ import Header from "@/components/layout/Header";
 import Home from "@/pages/Home";
 import MyInitiatives from "@/pages/MyInitiatives";
 import ProgressInitiative from "@/pages/ProgressInitiative";
+import ProtectedRoute from "@/components/routing/ProtectedRoute";
+import AdminRoute from "@/components/routing/AdminRoute";
+import AdministratorDashboard from "@/pages/AdministratorDashboard";
 
 function LayoutWithHeader({ children }: { children: React.ReactNode }) {
   return (
@@ -16,64 +20,85 @@ function LayoutWithHeader({ children }: { children: React.ReactNode }) {
   );
 }
 
+function LoginRoute() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-sm text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    return <Navigate to="/home" replace />;
+  }
+
+  return <Login />;
+}
+
 export default function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<LoginRoute />} />
 
         <Route
           path="/home"
           element={
-            <LayoutWithHeader>
-              <Home />
-            </LayoutWithHeader>
+            <ProtectedRoute>
+              <LayoutWithHeader>
+                <Home />
+              </LayoutWithHeader>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/my-initiatives"
           element={
-            <LayoutWithHeader>
-              <MyInitiatives />
-            </LayoutWithHeader>
+            <ProtectedRoute>
+              <LayoutWithHeader>
+                <MyInitiatives />
+              </LayoutWithHeader>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/initiatives/:id/progress"
           element={
-            <LayoutWithHeader>
-              <ProgressInitiative />
-            </LayoutWithHeader>
-          }
-        />
-
-
-        <Route
-          path="/news"
-          element={
-            <LayoutWithHeader>
-              <h1>Notícias</h1>
-            </LayoutWithHeader>
+            <ProtectedRoute>
+              <LayoutWithHeader>
+                <ProgressInitiative />
+              </LayoutWithHeader>
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/screening"
           element={
-            <LayoutWithHeader>
-              <h1>Triagem</h1>
-            </LayoutWithHeader>
+            <AdminRoute>
+              <LayoutWithHeader>
+                <AdministratorDashboard />
+              </LayoutWithHeader>
+            </AdminRoute>
           }
         /> 
 
         <Route
           path="/create-initiative"
           element={
-            <LayoutWithHeader>
-              <CreateInitiative />
-            </LayoutWithHeader>
+            <ProtectedRoute>
+              <LayoutWithHeader>
+                <CreateInitiative />
+              </LayoutWithHeader>
+            </ProtectedRoute>
           }
         />
 

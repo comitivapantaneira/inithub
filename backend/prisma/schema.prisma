@@ -47,7 +47,6 @@ model Initiative {
   commentsCount       Int               @default(0)
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
-  
 
   // Relations
   author      User              @relation("InitiativeAuthor", fields: [authorId], references: [id])
@@ -94,6 +93,7 @@ model InitiativeUpdate {
   initiativeId  String
   authorId      String
   content       String
+  isCompleted   Boolean  @default(false)
   createdAt     DateTime @default(now())
 
   initiative Initiative @relation(fields: [initiativeId], references: [id])

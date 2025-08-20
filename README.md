@@ -42,8 +42,30 @@ As APIs REST são usadas para operações padrão, como gerenciamento de dados, 
 - **Banco de Dados:** PostgreSQL + pgvector
 - **Infraestrutura:** Docker, Docker Compose
 
-## 🏃♂️ Como Executar o Backend
+## 🏃 Executar
 
-Para instruções completas de instalação, variáveis de ambiente, migrações, execução, endpoints e testes, consulte:
+```bash
+# Configuração Inicial:
+Copie os arquivos `.env.example` para `.env` (remova a extensão `.example`).
 
-- [backend/README.md](backend/README.md)
+# Requisitos:
+Verifique se o Docker e o Docker Compose estão instalados e funcionando corretamente em sua máquina.
+
+# Diretório de Trabalho:
+Navegue até o diretório raiz do projeto (`/inithub`).
+
+# Construção e Execução:
+Execute o comando abaixo para construir as imagens e iniciar todos os containers:
+
+docker compose up --build
+```
+
+## 🔨 Serviços
+
+Cada serviço possui documentação específica com informações detalhadas:
+
+> [frontend/README.md](frontend/README.md)
+
+> [backend/README.md](backend/README.md)
+
+> [agent/README.md](agent/README.md)
