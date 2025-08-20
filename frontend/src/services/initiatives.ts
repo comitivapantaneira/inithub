@@ -183,6 +183,47 @@ class InitiativesService {
       throw error;
     }
   }
+
+  async createInitiative(payload: {
+    title: string;
+    description: string;
+    theme: string;
+    context: string;
+    deliverable: string;
+    evaluationCriteria: string;
+    authorId?: string;
+  }) {
+    const localUser = authService.getUserFromLocalStorage();
+    if (!localUser?.id && !payload.authorId) {
+      throw new Error('Sessão inválida. Faça login para publicar a ideia.');
+    }
+
+    const body = {
+      title: payload.title,
+      description: payload.description,
+      theme: payload.theme,
+      context: payload.context,
+      deliverable: payload.deliverable,
+      evaluationCriteria: payload.evaluationCriteria,
+      authorId: payload.authorId ?? localUser!.id,
+    };
+
+    // Simple client-side validation mirroring backend DTO requirements
+    const missing = Object.entries(body)
+      .filter(([, v]) => typeof v === 'string' && !String(v).trim())
+      .map(([k]) => k);
+    if (missing.length > 0) {
+      throw new Error(`Preencha todos os campos obrigatórios: ${missing.join(', ')}`);
+    }
+
+    try {
+      const response = await api.post('/initiatives', body);
+      return response.data as Initiative;
+    } catch (error) {
+      console.error('Erro ao criar iniciativa:', error);
+      throw error;
+    }
+  }
 }
 
 export const initiativesService = new InitiativesService();

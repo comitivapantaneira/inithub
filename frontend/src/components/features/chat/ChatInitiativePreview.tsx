@@ -5,9 +5,10 @@ import type { ChatInitiative } from "@/services/agent";
 type Props = {
     initiative: ChatInitiative | null;
     onChange?: (value: ChatInitiative | null) => void;
+    onPublish?: () => void;
 };
 
-const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
+const ChatInitiativePreview = ({ initiative, onChange, onPublish }: Props) => {
     const safe = initiative ?? {};
 
     const update = (patch: Partial<ChatInitiative>) => {
@@ -81,7 +82,10 @@ const ChatInitiativePreview = ({ initiative, onChange }: Props) => {
                 <button className="px-8 py-2 font-medium text-sm bg-gray-100 hover:bg-gray-300 rounded-lg transition-colors">
                     Cancelar
                 </button>
-                <button className="px-8 py-2 font-medium text-sm bg-[var(--green-primary)] text-white rounded-lg hover:bg-green-700 transition-colors">
+                <button
+                    className="px-8 py-2 font-medium text-sm bg-[var(--green-primary)] text-white rounded-lg hover:bg-green-700 transition-colors"
+                    onClick={onPublish}
+                >
                     Publicar Ideia
                 </button>
             </div>
