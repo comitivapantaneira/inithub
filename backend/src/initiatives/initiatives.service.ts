@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto, CreateLikeDto, ApproveInitiativeDto, CreateInitiativeUpdateDto, UpdateInitiativeUpdateDto } from './dto';
+import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto, CreateLikeDto, ApproveInitiativeDto, CreateInitiativeUpdateDto, UpdateInitiativeUpdateDto, ChangeStatusDto } from './dto';
 import { EmbeddingsService } from '../embeddings/embeddings.service';
 
 @Injectable()
@@ -158,11 +158,62 @@ export class InitiativesService {
     return this.prisma.initiative.update({
       where: { id },
       data: payload,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        assignedBy: { 
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        likes: {
+          select: { userId: true },
+        },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: {
+              select: { id: true, name: true, emojiAvatar: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+        updates: {
+          select: {
+            id: true,
+            content: true,
+            isCompleted: true,
+            createdAt: true,
+            author: {
+              select: { id: true, name: true, emojiAvatar: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
     });
   }
 
-  async remove(id: string) {
-    return this.prisma.initiative.delete({ where: { id } });
+  async remove(id: string, userId?: string) {
   }
 
   async addLike(initiativeId: string, data: CreateLikeDto) {
@@ -193,20 +244,6 @@ export class InitiativesService {
     if (comment.initiativeId !== initiativeId) throw new BadRequestException('Comment does not belong to initiative');
     if (comment.userId !== userId) throw new BadRequestException('Only the comment owner can delete the comment');
     return this.prisma.comment.delete({ where: { id: commentId } });
-  }
-
-  async approve(id: string, data: ApproveInitiativeDto) {
-    const { assignedToId, assignedById } = data;
-    if (!assignedToId || !assignedById) throw new BadRequestException('assignedToId and assignedById are required');
-    return this.prisma.initiative.update({
-      where: { id },
-      data: {
-        status: 'IN_EXECUTION' as any,
-        assignedToId,
-        assignedById,
-        assignedAt: new Date(),
-      },
-    });
   }
 
   async addUpdate(initiativeId: string, data: CreateInitiativeUpdateDto) {
@@ -405,4 +442,75 @@ export class InitiativesService {
       },
     });
   }
+
+  async changeStatus(id: string, data: ChangeStatusDto) {
+    const initiative = await this.prisma.initiative.findUnique({ where: { id } });
+    if (!initiative) throw new NotFoundException('Initiative not found');
+
+    const payload: any = { status: data.status as any };
+
+    if (data.status === 'IN_EXECUTION' && data.assignedToId && data.assignedById) {
+      payload.assignedToId = data.assignedToId;
+      payload.assignedById = data.assignedById;
+      payload.assignedAt = new Date();
+    }
+
+    return this.prisma.initiative.update({
+      where: { id },
+      data: payload,
+      include: {
+        author: {
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        assignedTo: {
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        assignedBy: { 
+          select: {
+            id: true,
+            name: true,
+            emojiAvatar: true,
+            department: true,
+          },
+        },
+        likes: {
+          select: { userId: true },
+        },
+        comments: {
+          select: {
+            id: true,
+            content: true,
+            createdAt: true,
+            user: {
+              select: { id: true, name: true, emojiAvatar: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+        updates: {
+          select: {
+            id: true,
+            content: true,
+            isCompleted: true,
+            createdAt: true,
+            author: {
+              select: { id: true, name: true, emojiAvatar: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+  }
+
 }

@@ -5,3 +5,4 @@ export * from './create-like.dto';
 export * from './approve-initiative.dto';
 export * from './create-initiative-update.dto';
 export * from './update-initiative-update.dto';
+export * from './change-status.dto';

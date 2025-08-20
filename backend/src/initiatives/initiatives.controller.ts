@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { InitiativesService } from './initiatives.service';
-import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto, CreateLikeDto, ApproveInitiativeDto, CreateInitiativeUpdateDto, UpdateInitiativeUpdateDto } from './dto';
+import { CreateInitiativeDto, UpdateInitiativeDto, CreateCommentDto, CreateLikeDto, ApproveInitiativeDto, CreateInitiativeUpdateDto, UpdateInitiativeUpdateDto, ChangeStatusDto } from './dto';
 
 @ApiTags('initiatives')
 @Controller('initiatives')
@@ -75,15 +75,6 @@ export class InitiativesController {
     return this.initiativesService.removeComment(id, commentId, userId);
   }
 
-  @Patch(':id/approve')
-  @ApiOperation({ summary: 'Approve and assign initiative' })
-  approve(
-    @Param('id') id: string,
-    @Body() dto: ApproveInitiativeDto,
-  ) {
-    return this.initiativesService.approve(id, dto);
-  }
-
   @Post(':id/updates')
   @ApiOperation({ summary: 'Add execution update to initiative' })
   addUpdate(
@@ -118,5 +109,31 @@ export class InitiativesController {
   @ApiOperation({ summary: 'Get initiatives assigned to user' })
   findByAssignedTo(@Param('userId') userId: string) {
     return this.initiativesService.findByAssignedTo(userId);
+  }
+
+  @Patch(':id/:status')
+  @ApiOperation({ summary: 'Change initiative status' })
+  changeStatusByParam(
+    @Param('id') id: string,
+    @Param('status') status: string,
+    @Body() body?: any,
+  ) {
+    const validStatuses = ['pending', 'rejected', 'execution', 'completed'];
+    if (!validStatuses.includes(status.toLowerCase())) {
+      throw new BadRequestException(`Status inválido: ${status}. Use: ${validStatuses.join(', ')}`);
+    }
+
+    const statusMap: Record<string, string> = {
+      'pending': 'PENDING',
+      'rejected': 'REJECTED', 
+      'execution': 'IN_EXECUTION',
+      'completed': 'COMPLETED'
+    };
+
+    return this.initiativesService.changeStatus(id, { 
+      status: statusMap[status.toLowerCase()] as any,
+      assignedToId: body?.assignedToId,
+      assignedById: body?.assignedById,
+    });
   }
 }
