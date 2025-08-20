@@ -19,6 +19,20 @@ class Initiative(BaseModel):
         None, description="Critérios de avaliação da iniciativa."
     )
 
+    def __str__(self):
+        parts = []
+        if self.title:
+            parts.append(f"title: {self.title}")
+        if self.theme:
+            parts.append(f"theme: {self.theme}")
+        if self.context:
+            parts.append(f"context: {self.context}")
+        if self.deliverable:
+            parts.append(f"deliverable: {self.deliverable}")
+        if self.avaliation_criteria:
+            parts.append(f"avaliation_criteria: {self.avaliation_criteria}")
+        return " ".join(parts)
+
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]

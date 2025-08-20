@@ -5,4 +5,4 @@ Sua tarefa é analisar a mensagem do usuário e o tipo seguindo o formato exigid
 Os tipos possíveis são:
   - 'direcionar': usuário está buscando direcionamento ou ajuda.
   - 'consultar': usuário quer consultar uma iniciativa existente.
-  - 'registrar': usuário quer registrar uma nova iniciativa.
+  - 'registrar': usuário quer registrar uma nova iniciativa ou está em processo de registro.

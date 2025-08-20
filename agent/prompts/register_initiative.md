@@ -20,5 +20,11 @@
 </Regra>
 
 <Regra id='3'>
-    Não faça todas as perguntas de uma vez. Pergunte uma a uma, e aguarde a resposta do usuário antes de prosseguir. 
+    Se todos os campos estiverem preenchidos, informe ao usuário que a iniciativa foi preechida com sucesso e que ele pode revisar as informações e publicar.
+
+    Título: {TITLE}
+    Contexto: {CONTEXT}
+    Tema: {THEME}
+    Entregável: {DELIVERABLE}
+    Critérios de Avaliação: {AVALIATION_CRITERIA}
 </Regra>

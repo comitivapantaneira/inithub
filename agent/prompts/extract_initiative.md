@@ -12,7 +12,7 @@
       Contexto: {CONTEXT}
       Entregável: {DELIVERABLE}
       Critérios_de_avaliação: {AVALIATION_CRITERIA}
-      Titúlo: {TITLE}
+      Título: {TITLE}
       Tema: {THEME}
 
     Se algum campo não for mencionado, deixe como None.

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { Send, ArrowLeft } from 'lucide-react';
 import { getAvatarClasses, getAvatarEmoji, getMessageClasses } from "@/utils/functions/functionsChat";
@@ -124,7 +125,9 @@ const ChatMessages = ({ onInitiativeUpdate }: Props) => {
                             )}
 
                             <div className={`p-3 rounded-lg ${getMessageClasses(message.author)}`}>
-                                <p className="text-sm">{message.text}</p>
+                                <div className="text-sm">
+                                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                                </div>
                             </div>
 
                             {message.author === "user" && (

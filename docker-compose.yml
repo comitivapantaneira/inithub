@@ -29,6 +29,8 @@ services:
     ports:
       - "8000:8000"
     env_file: "./.env"
+    volumes:
+      - ./agent:/app
     networks:
       - init-hub-network
 
