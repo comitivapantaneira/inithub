@@ -34,7 +34,7 @@ const CreateInitiative = () => {
         try {
             await initiativesService.createInitiative({
                 title: String(i.title),
-                description: String(i.description) || "",
+                description: String(i.context) || "",
                 theme: String(i.theme),
                 context: String(i.context),
                 deliverable: String(i.deliverable),
