@@ -159,27 +159,31 @@ class InitiativesService {
         // keep fallback to localAdmin.id
       }
     }
-
-    try {
-      const response = await api.patch(`/initiatives/${initiativeId}/approve`, {
-        assignedToId,
-        assignedById,
-      });
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao aprovar iniciativa ${initiativeId}:`, error);
-      throw error;
-    }
+    return this.changeInitiativeStatus(initiativeId, 'execution', { assignedToId, assignedById });
   }
 
   async rejectInitiative(initiativeId: string) {
+    return this.changeInitiativeStatus(initiativeId, 'rejected');
+  }
+
+  async moveInitiativeToPending(initiativeId: string) {
+    return this.changeInitiativeStatus(initiativeId, 'pending');
+  }
+
+  async moveInitiativeToExecution(initiativeId: string) {
+    return this.changeInitiativeStatus(initiativeId, 'execution');
+  }
+
+  async completeInitiative(initiativeId: string) {
+    return this.changeInitiativeStatus(initiativeId, 'completed');
+  }
+
+  async changeInitiativeStatus(initiativeId: string, status: string, body?: any) {
     try {
-      const response = await api.patch(`/initiatives/${initiativeId}`, {
-        status: 'REJECTED',
-      });
+      const response = await api.patch(`/initiatives/${initiativeId}/${status}`, body || {});
       return response.data;
     } catch (error) {
-      console.error(`Erro ao rejeitar iniciativa ${initiativeId}:`, error);
+      console.error(`Erro ao alterar status da iniciativa ${initiativeId} para ${status}:`, error);
       throw error;
     }
   }

@@ -10,11 +10,11 @@ const InitiativeHeader = ({ initiative }: InitiativeHeaderProps) => {
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center space-x-3">
-        <div className="text-2xl">{initiative.author.emojiAvatar}</div>
+        <div className="text-2xl">{initiative.author.emojiAvatar || '👤'}</div>
         <div className="flex flex-col leading-tight">
-          <h3 className="font-semibold text-gray-900">{initiative.author.name}</h3>
+          <h3 className="font-semibold text-gray-900">{initiative.author.name || 'Nome não disponível'}</h3>
           <p className="text-sm text-gray-500">
-            {initiative.author.department} • {convertDateToString(new Date(initiative.createdAt))}
+            {initiative.author.department || 'Departamento não disponível'} • {convertDateToString(new Date(initiative.createdAt))}
           </p>
         </div>
       </div>

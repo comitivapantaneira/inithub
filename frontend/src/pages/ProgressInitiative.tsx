@@ -42,7 +42,20 @@ const ProgressInitiative = () => {
     loadInitiative();
   }, [id]);
 
-  const goToPreviousScreen = () => navigate(-1);
+  const goToPreviousScreen = () => {
+    const referrer = document.referrer;
+    const isFromSameOrigin = referrer && referrer.startsWith(window.location.origin);
+    
+    if (isFromSameOrigin) {
+      navigate(-1);
+    } else {
+      if (user?.isAdmin) {
+        navigate('/screening');
+      } else {
+        navigate('/home');
+      }
+    }
+  };
 
   const handleAddStepContent = async (content: string) => {
     if (!canManage || !user || !initiative) return;
@@ -128,7 +141,7 @@ const ProgressInitiative = () => {
         <div className="text-center">
           <p className="text-red-600 mb-4">{error || 'Iniciativa não encontrada'}</p>
           <button 
-            onClick={() => navigate(-1)}
+            onClick={goToPreviousScreen}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Voltar
@@ -159,6 +172,13 @@ const ProgressInitiative = () => {
               <div>
                 <h1 className="text-lg font-bold text-gray-900 mb-3">{initiative.title}</h1>
                 <p className="text-sm text-gray-500 mb-2">{initiative.description}</p>
+                {canManage && (
+                  <>
+                    <p className="text-sm text-gray-500 mb-2">Contexto: {initiative.context}</p>
+                    <p className="text-sm text-gray-500 mb-2">Critérios de Avaliação: {initiative.evaluationCriteria}</p>
+                  </>
+                )}
+
                 <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-sm text-gray-500 mb-3">
                   <span>Iniciativa proposta por <strong>{initiative.author?.name || 'Desconhecido'}</strong></span>
                   <span className="hidden sm:inline">•</span>
