@@ -15,13 +15,73 @@ Agent: Entendi, sua ideia é criar um portal interativo para orientar novos inve
 User: Número de acessos, taxa de conclusão das trilhas e feedback dos usuários.
 Agent: Sugerir temas estratégicos da B3 para a iniciativa e título da iniciativa.
 
-User: Boa, sugestões estão corretas, pode salvar a iniciativa.
-Agent: Ótimo, aguarde um momento, estou registrando sua iniciativa!
-Agent: Iniciativa registrada com sucesso! Você pode revisar e complementar as informações em {INITIATIVE_URL}.
-
 
 ## Caminho Alternativo - Restaurante
 User: Olá, estou com uma iniciativa e preciso de uma ajuda sua para poder refina-la, é uma proposta para a humana mesmo para um restaurante dentro da propria empresa afinal muitos funcionarios perdem tempo durante as duas horas de almoço, onde ocorre atrasos.
+Agent: Entendi! Qual o principal objetivo dessa iniciativa?
+
+User: Reduzir atrasos e otimizar o tempo de almoço dos funcionários.
+Agent: Ótimo! Qual seria o entregável dessa iniciativa?
+
+User: Um restaurante interno com sistema de pedidos antecipados e cardápio digital.
+Agent: E como você pretende avaliar o sucesso dessa iniciativa?
+
+User: Tempo médio de espera, satisfação dos funcionários, adesão ao sistema.
+Agent: Perfeito! Qual tema estratégico da B3 mais se encaixa?
+
+User: Cultura.
+Agent: Iniciativa registrada com sucesso!
+
+
+## Caminho Alternativo - Mentoria
+User: Quero registrar uma iniciativa para ajudar novos colaboradores a se integrarem melhor.
+Agent: Ótima ideia! Qual o contexto dessa necessidade?
+
+User: Novos colaboradores têm dificuldades de adaptação nos primeiros meses.
+Agent: Qual seria o entregável dessa iniciativa?
+
+User: Plataforma de mentoria conectando novos e antigos funcionários.
+Agent: E os critérios de avaliação?
+
+User: Taxa de retenção, avaliações de satisfação, número de interações mentor-mentorado.
+Agent: Qual tema estratégico?
+
+User: Governança.
+Agent: Iniciativa registrada!
+
+
+## Caminho Alternativo - Reciclagem
+User: Quero propor uma campanha de reciclagem comunitária.
+Agent: Qual o contexto dessa proposta?
+
+User: Baixa taxa de reciclagem em bairros urbanos.
+Agent: Qual o entregável?
+
+User: Relatórios mensais sobre recicláveis coletados e taxa de participação.
+Agent: Critérios de avaliação?
+
+User: Toneladas coletadas, % de participação domiciliar, feedback da comunidade.
+Agent: Tema estratégico?
+
+User: Ecossistema.
+Agent: Iniciativa registrada!
+
+
+## Caminho Alternativo - Hackathon
+User: Gostaria de engajar as equipes em um hackathon para resolver desafios internos.
+Agent: Qual o contexto?
+
+User: Necessidade de soluções criativas para problemas operacionais.
+Agent: Qual o entregável?
+
+User: Evento de hackathon com premiação para melhores soluções.
+Agent: Critérios de avaliação?
+
+User: Número de soluções implementadas, engajamento, feedback dos participantes.
+Agent: Tema estratégico?
+
+User: P&D.
+Agent: Iniciativa registrada!
 
 
 ## Caminho Alternativo - Buscar iniciativa
