@@ -40,8 +40,9 @@ services:
       dockerfile: ./docker/frontend.dockerfile
     container_name: init-hub-frontend
     restart: always
-    ports:
-      - "5173:5173"
+    # Expose frontend port to the internal network only. Nginx will proxy external traffic on :80 -> frontend:5173
+    expose:
+      - "5173"
     env_file: "./.env"
     volumes:
       - ./frontend:/app
@@ -72,6 +73,21 @@ services:
       - pg_data:/var/lib/postgresql/data
     networks:
       - init-hub-network
+
+  nginx:
+    image: nginx:stable
+    container_name: init-hub-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - init-hub-network
+    depends_on:
+      - frontend
+      - backend
+      - agent
 
 networks:
   init-hub-network:
