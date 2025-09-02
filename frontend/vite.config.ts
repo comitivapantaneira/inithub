@@ -19,6 +19,6 @@ export default defineConfig({
     watch: {
       usePolling: true
     },
-    allowedHosts: ['inithub.site']
+    allowedHosts: ['inithub.site', 'www.inithub.site']
   },
 })
