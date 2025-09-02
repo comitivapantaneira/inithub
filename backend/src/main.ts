@@ -6,6 +6,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
+  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
 
@@ -14,9 +16,10 @@ async function bootstrap() {
     .setDescription('API para gestão de iniciativas colaborativas')
     .setVersion('1.0')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+
+  SwaggerModule.setup('routes', app, document);
 
   await app.listen(3000);
 }
