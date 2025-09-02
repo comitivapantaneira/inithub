@@ -14,11 +14,11 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: 'localhost',
+    host: '0.0.0.0',
     strictPort: true,
     watch: {
       usePolling: true
     },
-    allowedHosts: ['inithub.site', 'www.inithub.site']
+    allowedHosts: ['inithub.site', 'www.inithub.site', 'init-hub-frontend', 'localhost']
   },
 })

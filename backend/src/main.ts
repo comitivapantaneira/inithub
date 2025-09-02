@@ -5,7 +5,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(new ValidationPipe());
@@ -19,7 +19,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('routes', app, document);
+  SwaggerModule.setup('api/routes', app, document);
 
   await app.listen(3000);
 }
