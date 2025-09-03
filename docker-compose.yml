@@ -41,6 +41,8 @@ services:
     container_name: init-hub-frontend
     restart: always
     # Expose frontend port to the internal network only. Nginx will proxy external traffic on :80 -> frontend:5173
+    ports:
+      - "5173:5173"
     expose:
       - "5173"
     env_file: "./.env"
