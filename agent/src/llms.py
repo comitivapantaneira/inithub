@@ -14,6 +14,7 @@ if env.OPENAI_API_KEY:
 
 elif env.OPENROUTER_API_KEY:
     default_llm = ChatOpenAI(
+        base_url=env.OPENROUTER_ENDPOINT,
         model=env.OPENROUTER_MODEL_NAME,
         temperature=0.3,
         api_key=env.OPENROUTER_API_KEY,
