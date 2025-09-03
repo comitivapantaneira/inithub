@@ -13,11 +13,12 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   server: {
-    host: '0.0.0.0',
     port: 5173,
+    host: '0.0.0.0',
     strictPort: true,
     watch: {
       usePolling: true
-    }
+    },
+    allowedHosts: ['inithub.site', 'www.inithub.site', 'init-hub-frontend', 'localhost']
   },
 })
